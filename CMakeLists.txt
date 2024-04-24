@@ -3,4 +3,6 @@ project(DAProject2)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(DAProject2 main.cpp)
+add_executable(DAProject2 main.cpp
+        Graph/Graph.cpp
+        Graph/Graph.h)
