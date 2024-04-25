@@ -48,6 +48,14 @@ int main() {
     g.setEdgeDistance(3, 4, 750, 1);
 
     cout << "O custo mínimo é: " << Algorithms::TSPwithBacktracking(&g) << endl;
+    Vertex* v = g.getVertex(0);
+
+    cout << "O caminho é 0";
+    while (true) {
+        cout << " -> " << v->getNextVertex();
+        v = g.getVertex(v->getNextVertex());
+        if (v->getId() == 0) break;
+    }
 
     return 0;
 }

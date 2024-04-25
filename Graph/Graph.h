@@ -30,7 +30,7 @@ protected:
     float latitude;
     float longitude;
 
-    Vertex* nextVertex = nullptr; // contains the next vertex in the path
+    int nextVertex; // contains the next vertex in the path
     //std::vector<Edge *> incoming;
     std::string code;
 
@@ -43,6 +43,8 @@ public:
     bool isProcessing(){return processing;}
     void setVisited(bool v){visited = v;}
     void setProcessing(bool p){processing = p;}
+    int getNextVertex(){return nextVertex;}
+    void setNextVertex(int nextVertex){this->nextVertex = nextVertex;}
     friend class Graph;
 };
 

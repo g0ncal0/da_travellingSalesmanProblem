@@ -20,6 +20,7 @@ bool Algorithms::auxTSPwithBacktracking(Graph* g, int id, int& costToBeat, int n
 
         if (cost < costToBeat) {
             costToBeat = cost;
+            v->setNextVertex(0);
             isPossible = true;
         }
     }
@@ -32,6 +33,7 @@ bool Algorithms::auxTSPwithBacktracking(Graph* g, int id, int& costToBeat, int n
 
             if (auxTSPwithBacktracking(g, i, auxCostToBeat, numberVisited)) {
                 costToBeat = auxCostToBeat + costEdge;
+                v->setNextVertex(i);
                 isPossible = true;
             }
         }
