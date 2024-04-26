@@ -5,8 +5,10 @@
 
 using namespace std;
 
+#include "Parser.h"
+
 int main() {
-    Graph g = Graph(5);
+    //Graph g = Graph(5);
 
     /*g.setEdgeDistance(0, 1, 10.0, 1);
     g.setEdgeDistance(0, 2, 50, 0);
@@ -15,8 +17,7 @@ int main() {
     g.setEdgeDistance(3, 2, 24, 1);
     g.printDebug();*/
 
-
-    //GRAFO DO TURISMO DO PORTOOOO//
+    /*//GRAFO DO TURISMO DO PORTOOOO//
     std::vector<Vertex*> vertexSet;
 
     Vertex v0(0, "", 0, 0);
@@ -45,15 +46,17 @@ int main() {
     g.setEdgeDistance(2, 3, 500, 1);
     g.setEdgeDistance(2, 4, 600, 1);
 
-    g.setEdgeDistance(3, 4, 750, 1);
+    g.setEdgeDistance(3, 4, 750, 1);*/
 
-    cout << "O custo mínimo é: " << Algorithms::TSPwithBacktracking(&g) << endl;
-    Vertex* v = g.getVertex(0);
+    Graph* g = Parser::parse();
+
+    cout << "O custo mínimo é: " << Algorithms::TSPwithBacktracking(g) << endl;
+    Vertex* v = g->getVertex(0);
 
     cout << "O caminho é 0";
     while (true) {
         cout << " -> " << v->getNextVertex();
-        v = g.getVertex(v->getNextVertex());
+        v = g->getVertex(v->getNextVertex());
         if (v->getId() == 0) break;
     }
 

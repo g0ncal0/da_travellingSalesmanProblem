@@ -13,8 +13,8 @@
 
 // struct com distância, bool ifIsInOriginalGraph
 struct VInfo{
-    float distance;
-    bool isInGraph;
+    float distance = 0;
+    bool isInGraph = false;
 };
 float calculateDistance(int latA, int lonA, int latB, int lonB);
 int getposition(int noVertexes, int a, int b);
@@ -36,6 +36,7 @@ protected:
 
 public:
     Vertex(int id,const std::string& code, float lat, float lon) : id(id), code(code), latitude(lat), longitude(lon){};
+    Vertex(int id) : id(id) {};
     int getId() const{return id;}
     float getLat(){return latitude;}
     float getLon(){return longitude;}
@@ -64,6 +65,12 @@ public:
         this->noVertexes = noVertexes;
         line.resize(noVertexes);
     }
+
+    void addVertex(int id) {
+        Vertex* v = new Vertex(id);
+        vertexSet.push_back(v);
+    }
+
     void setVertexSet(std::vector<Vertex*> set){
         this->vertexSet = set;
     }
@@ -109,6 +116,7 @@ public:
         }else{
             data[getposition(noVertexes, start, end)] = -distance;
         }
+
         return true;
     }
 };

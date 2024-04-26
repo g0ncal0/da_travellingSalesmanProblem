@@ -7,4 +7,6 @@ add_executable(DAProject2 main.cpp
         Graph/Graph.cpp
         Graph/Graph.h
         Algorithms/Algorithms.h
-        Algorithms/Algorithms.cpp)
+        Algorithms/Algorithms.cpp
+        Parser.h
+        Parser.cpp)
