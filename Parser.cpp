@@ -186,5 +186,72 @@ Graph* Parser::parseExtraFullyConnected() {
 }
 
 Graph* Parser::parseRealWorld() {
-    return new Graph(1);
+    int answer;
+    string nodesFile = "../Data/Real-world-Graphs/";
+    string edgesFile = nodesFile;
+    int nVertex;
+
+    cout << "\nWhich graph do you want?\n1. Graph 1\n2. Graph 2\n3. Graph3\nYour answer: ";
+    cin >> answer;
+
+    if (answer == 2) {
+        nodesFile += "graph2/nodes.csv";
+        edgesFile += "graph2/edges.csv";
+        nVertex = 5000;
+    }
+    else if (answer == 3) {
+        nodesFile += "graph3/nodes.csv";
+        edgesFile += "graph3/edges.csv";
+        nVertex = 10000;
+    }
+    else {
+        nodesFile += "graph1/nodes.csv";
+        edgesFile += "graph1/edges.csv";
+        nVertex = 1000;
+    }
+
+    Graph* graph = new Graph(nVertex);
+
+    string line;
+    int id;
+    float longitude;
+    float latitude;
+    int ori;
+    int dest;
+    float distance;
+
+    ifstream nodes(nodesFile);
+    getline(nodes, line);
+
+    for (int i = 0; i < nVertex; i++) {
+        getline(nodes, line);
+        istringstream iss(line);
+
+        getInt(iss,id);
+        getFloat(iss, longitude);
+        getFloat(iss, latitude);
+
+        graph->addVertex(id, latitude, longitude);
+    }
+
+    ifstream ifs(edgesFile);
+    getline(ifs, line);
+
+    while (getline(ifs,line)) {
+        istringstream iss(line);
+
+        getInt(iss,ori);
+        getInt(iss, dest);
+        getFloat(iss, distance);
+
+        graph->setEdgeDistance(ori, dest, distance, true);
+    }
+
+    for (int i = 0; i < nVertex; i++) {
+        for (int j = i + 1; j < nVertex; j++) {
+            graph->getDistance(i, j);
+        }
+    }
+
+    return graph;
 }
