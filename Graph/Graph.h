@@ -18,7 +18,7 @@ struct VInfo{
 };
 float calculateDistance(int latA, int lonA, int latB, int lonB);
 int getposition(int noVertexes, int a, int b);
-int factorial(int n);
+long factorial(int n);
 
 
 class Vertex{
@@ -32,10 +32,9 @@ protected:
 
     int nextVertex; // contains the next vertex in the path
     //std::vector<Edge *> incoming;
-    std::string code;
 
 public:
-    Vertex(int id,const std::string& code, float lat, float lon) : id(id), code(code), latitude(lat), longitude(lon){};
+    Vertex(int id, float lat, float lon) : id(id), latitude(lat), longitude(lon){};
     Vertex(int id) : id(id) {};
     int getId() const{return id;}
     float getLat(){return latitude;}
@@ -60,14 +59,20 @@ public:
 
     // Yes, you need the noVertexes when init the graph.. perharps we can do this by adding a line on each file with info of noVertexes
     Graph(int noVertexes){
-        int sizeOfVector = ((float) factorial(noVertexes)) / (2.0 * factorial(noVertexes - 2)); // Calculate combinatorial -> how many combinations of vertexes exist
+        unsigned int sizeOfVector = (noVertexes * (noVertexes-1)) / (2);
         data.resize(sizeOfVector);
         this->noVertexes = noVertexes;
-        line.resize(noVertexes);
+        //line.resize(noVertexes);
+        std::cout << "done" << std::endl;
     }
 
     void addVertex(int id) {
         Vertex* v = new Vertex(id);
+        vertexSet.push_back(v);
+    }
+
+    void addVertex(int id, float latitude, float longitude) {
+        Vertex* v = new Vertex(id, latitude, longitude);
         vertexSet.push_back(v);
     }
 
@@ -82,17 +87,17 @@ public:
     }
 
     float getDistance(int s, int e){
+        //Acho que esta função está mal, se for negativo deve retornar negativo -> a verificação deve ser feita do outro lado
+        //Vou alterar isto, qualquer coisa altera-se outra vez
+
         float distance = data[getposition(noVertexes, s, e)];
-        if(distance < 0){
-            return -distance;
-        }
         if(distance == 0){
             // calculate
             Vertex* sVertex = getVertex(s);
             Vertex* eVertex = getVertex(e);
-            float d = calculateDistance(sVertex->getLat(), sVertex->getLon(), eVertex->getLat(), eVertex->getLon());
+            distance = - (calculateDistance(sVertex->getLat(), sVertex->getLon(), eVertex->getLat(), eVertex->getLon())); //aqui deve ser negativo, isto só vai chegar aqui caso o edge não exista no grafo
             // update in table
-            data[getposition(noVertexes, s, e)] = d;
+            data[getposition(noVertexes, s, e)] = distance;
         }
         return distance;
     }
@@ -120,12 +125,5 @@ public:
         return true;
     }
 };
-
-
-
-
-
-
-
 
 #endif //DAPROJECT2_GRAPH_H
