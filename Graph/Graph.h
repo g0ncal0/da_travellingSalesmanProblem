@@ -18,7 +18,7 @@ struct VInfo{
 };
 float calculateDistance(int latA, int lonA, int latB, int lonB);
 int getposition(int noVertexes, int a, int b);
-int factorial(int n);
+unsigned long long combination(unsigned long long n, unsigned long long k);
 
 
 class Vertex{
@@ -49,7 +49,7 @@ public:
 class Graph{
 protected:
     std::vector<Vertex*> vertexSet;    // vertex set
-    std::vector<float> data; // save it as negative if not in graph - if 0, it has not been calculated yet
+    std::vector<float>* data; // save it as negative if not in graph - if 0, it has not been calculated yet
     int noVertexes;
     std::vector<VInfo> line;
 
@@ -57,8 +57,13 @@ public:
 
     // Yes, you need the noVertexes when init the graph.. perharps we can do this by adding a line on each file with info of noVertexes
     Graph(int noVertexes){
-        int sizeOfVector = ((float) factorial(noVertexes)) / (2.0 * factorial(noVertexes - 2)); // Calculate combinatorial -> how many combinations of vertexes exist
-        data.resize(sizeOfVector);
+
+        unsigned long long sizeOfVector = combination(noVertexes, 2); // Calculate combinatorial -> how many combinations of vertexes exist
+        std::vector<float> r;
+        r.resize(sizeOfVector);
+        data = new std::vector<float>(sizeOfVector);
+        (*data).resize(sizeOfVector);
+        std::cout << (*data).size();
         this->noVertexes = noVertexes;
         line.resize(noVertexes);
     }
@@ -73,7 +78,14 @@ public:
     }
 
     float getDistance(int s, int e){
-        float distance = data[getposition(noVertexes, s, e)];
+        if(s >= noVertexes || e >= noVertexes || s < 0 || e < 0){
+            return false;
+        }
+        if(s == e){
+            return false;
+        }
+
+        float distance = (*data)[getposition(noVertexes, s, e)];
         if(distance < 0){
             return -distance;
         }
@@ -83,14 +95,14 @@ public:
             Vertex* eVertex = getVertex(e);
             float d = calculateDistance(sVertex->getLat(), sVertex->getLon(), eVertex->getLat(), eVertex->getLon());
             // update in table
-            data[getposition(noVertexes, s, e)] = d;
+            (*data)[getposition(noVertexes, s, e)] = d;
         }
         return distance;
     }
 
     void printDebug(){
-        for(float f : data){
-            std::cout << f;
+        for(float f : *data){
+            std::cout << f << " ";
         }
     }
 
@@ -103,9 +115,9 @@ public:
         }
 
         if(existsInGraph){
-            data[getposition(noVertexes, start, end)] = distance;
+            (*data)[getposition(noVertexes, start, end)] = distance;
         }else{
-            data[getposition(noVertexes, start, end)] = -distance;
+            (*data)[getposition(noVertexes, start, end)] = -distance;
         }
         return true;
     }

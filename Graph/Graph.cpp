@@ -5,8 +5,21 @@
 #include "Graph.h"
 
 
-int factorial(int n){
-    int res = 1;
+// From https://stackoverflow.com/questions/1838368/calculating-the-amount-of-combinations
+unsigned long long combination(unsigned long long n, unsigned long long k){
+    if (k > n) {
+        return 0;
+    }
+    unsigned long long r = 1;
+    for (unsigned long long d = 1; d <= k; ++d) {
+        r *= n--;
+        r /= d;
+    }
+    return r;
+}
+
+double factorial(int n){
+    double res = 1;
     for(int i = 1; i <= n; ++i) {
         res *= i;
     }
@@ -38,6 +51,7 @@ int getposition(int noVertexes, int a, int b){
     int offset = b - a; // distance after reaching the space of the "a" vertex - eg. if we were looking for d(1, 2), it would be 1.
 
     return indexFirstElementOfA + offset - 1;
+
 }
 
 
