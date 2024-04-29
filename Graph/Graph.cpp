@@ -3,28 +3,8 @@
 //
 
 #include "Graph.h"
+#include <cmath>
 
-
-// From https://stackoverflow.com/questions/1838368/calculating-the-amount-of-combinations
-unsigned long long combination(unsigned long long n, unsigned long long k){
-    if (k > n) {
-        return 0;
-    }
-    unsigned long long r = 1;
-    for (unsigned long long d = 1; d <= k; ++d) {
-        r *= n--;
-        r /= d;
-    }
-    return r;
-}
-
-double factorial(int n){
-    double res = 1;
-    for(int i = 1; i <= n; ++i) {
-        res *= i;
-    }
-    return res;
-}
 
 /**
  * Get the position of edge. Several sums and subtractions O(1)
@@ -58,7 +38,15 @@ int getposition(int noVertexes, int a, int b){
 
 
 float calculateDistance(int latA, int lonA, int latB, int lonB){
-    return 0;
+    double dLat = (latB - latA) * M_PI / 180.0;
+    double dLon = (lonB - lonA) * M_PI / 180.0;
+
+    latA = (latA) * M_PI / 180.0;
+    latB = (latB) * M_PI / 180.0;
+
+    // apply formulae
+    double a = pow(sin(dLat / 2), 2) + pow(sin(dLon / 2), 2) * cos(latA) * cos(latB);
+    double rad = 6371;
+    double c = 2 * asin(sqrt(a));
+    return rad * c;
 }
-
-

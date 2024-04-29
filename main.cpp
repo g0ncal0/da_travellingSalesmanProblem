@@ -1,31 +1,30 @@
 #include <iostream>
 
 #include "Graph/Graph.h"
+#include "Parser.h"
 #include <chrono>
+#include "Algorithms/Algorithms.h"
+
 
 int main() {
 
 
 
-    Graph g = Graph(40000);
-
-    g.setEdgeDistance(10000, 39000, 10.0, 1);
-    g.setEdgeDistance(33999, 12999, 50, 0);
-    g.setEdgeDistance(14000, 15000, 30, 1);
-    g.setEdgeDistance(32543, 14192, 40, 0);
-    g.setEdgeDistance(13323, 34324, 24, 1);
-    std::cout << "configuration finished";
+    Graph* g = Parser::parse();
 
     auto start = std::chrono::system_clock::now();
 
-    for(int i = 0; i < 100000; i++){
-        g.getDistance(10000, 39000);
-        g.getDistance(33999, 12999);
-        g.getDistance(14000, 15000);
-        g.getDistance(32543, 14192);
-        g.getDistance(13323, 34324);
-    }
+    std::cout << "O custo mínimo é: " << Algorithms::TSPwithBacktracking(g) << std::endl;
 
+/*
+    for (int i = 0; i < g->getVertexSet().size(); i++) std::cout << "Id = " << g->getVertexSet()[i]->getId() << "   Lat = " << g->getVertexSet()[i]->getLat() << std::endl;
+
+    for (int i = 0; i < g->getVertexSet().size(); i++) {
+        for (int j = i + 1; j < g->getVertexSet().size(); j++) {
+            std::cout << "i = " << i << "   j = " << j << "   dist = " << g->getDistance(i, j) << std::endl;
+        }
+    }
+*/
     auto end = std::chrono::system_clock::now();
 
     auto diff = end - start;

@@ -5,4 +5,8 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_executable(DAProject2 main.cpp
         Graph/Graph.cpp
-        Graph/Graph.h)
+        Graph/Graph.h
+        Algorithms/Algorithms.h
+        Algorithms/Algorithms.cpp
+        Parser.h
+        Parser.cpp)
