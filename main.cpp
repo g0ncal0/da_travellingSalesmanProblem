@@ -10,16 +10,21 @@ using namespace std;
 int main() {
     Graph* g = Parser::parse();
 
-
+    int initialID=0;
     cout<<"\nTriangular Approximation:\n";
-    cout << "O custo minimo 2 e: " << Algorithms::TSPwithTriangleApproximation(g,0) << endl;
-    Vertex* v = g->getVertex(0);
+    cout << "O custo minimo 2 e: " << Algorithms::TSPwithTriangleApproximation(g,initialID) << endl;
+    Vertex* v = g->getVertex(initialID);
 
-    cout << "O caminho e 0";
+    cout<< "O caminho e: "<<initialID;
+
     while (true) {
+        if (v->getNextVertex()==-1)
+        {
+            cout << " -> " << initialID;
+            break;
+        }
         cout << " -> " << v->getNextVertex();
         v = g->getVertex(v->getNextVertex());
-        if (v->getId() == 0) break;
     }
 
 /*
