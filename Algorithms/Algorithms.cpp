@@ -117,54 +117,6 @@ void Algorithms::auxMST(Graph *g, Vertex *startVertex, std::map<Vertex *, std::v
 
     return;
 
-
-    for (Vertex *other: g->getVertexSet()) {
-        edges.emplace(other, std::vector<Vertex *>());
-    }
-
-    std::vector<std::pair<Vertex *, Vertex *>> edgeArray;
-
-
-    std::set<Vertex *> verts;
-    for (auto v:g->getVertexSet()) {
-        verts.emplace(v);
-    }
-    Vertex *vert = startVertex;
-
-    while (!verts.empty()) {
-        vert->setVisited(true);
-        verts.erase(vert);
-
-        for (Vertex *other: g->getVertexSet()) {
-            if (!other->isVisited()) {
-                edgeArray.emplace_back(vert, other);
-            }
-        }
-        std::sort(edgeArray.begin(), edgeArray.end(),
-                  [&g](
-                          const std::pair<Vertex *, Vertex *> &l,
-                          const std::pair<Vertex *, Vertex *> &r
-                  ) {
-                      return g->getDistance(l.first->getId(), l.second->getId()) <
-                             g->getDistance(r.first->getId(), r.second->getId());
-                  });
-        while (edgeArray[0].first->isVisited() && edgeArray[0].second->isVisited()) {
-            edgeArray.erase(edgeArray.begin());
-            if (edgeArray.empty()) {
-                break;
-            }
-        }
-
-        if (!edgeArray.empty()) {
-            //add edge edgeArray[0] to map...;
-            edges[edgeArray[0].second].push_back(edgeArray[0].first);
-            edges[edgeArray[0].first].push_back(edgeArray[0].second);
-            //remove 0th element.
-            edgeArray.erase(edgeArray.begin());
-            break;
-        }
-
-    }
 }
 
 //could be optimized to calculate the distance, rather than leaving it to the loop at the end

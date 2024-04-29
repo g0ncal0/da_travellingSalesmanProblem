@@ -3,10 +3,10 @@
 //
 
 #include "Graph.h"
+#include <cmath>
 
-
-int factorial(int n){
-    int res = 1;
+long factorial(int n){
+    long res = 1;
     for(int i = 1; i <= n; ++i) {
         res *= i;
     }
@@ -44,7 +44,15 @@ int getposition(int noVertexes, int a, int b){
 
 
 float calculateDistance(int latA, int lonA, int latB, int lonB){
-    return 0;
+    double dLat = (latB - latA) * M_PI / 180.0;
+    double dLon = (lonB - lonA) * M_PI / 180.0;
+
+    latA = (latA) * M_PI / 180.0;
+    latB = (latB) * M_PI / 180.0;
+
+    // apply formulae
+    double a = pow(sin(dLat / 2), 2) + pow(sin(dLon / 2), 2) * cos(latA) * cos(latB);
+    double rad = 6371;
+    double c = 2 * asin(sqrt(a));
+    return rad * c;
 }
-
-
