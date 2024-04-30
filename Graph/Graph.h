@@ -31,7 +31,8 @@ protected:
     float longitude;
     std::vector<int> adjVertex;
 
-    int nextVertex; // contains the next vertex in the path
+    //-1 for invalid...
+    int nextVertex=-1; // contains the next vertex in the path
     //std::vector<Edge *> incoming;
 
 public:
