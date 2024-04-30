@@ -146,7 +146,7 @@ Graph* Parser::parseExtraFullyConnected() {
         nVertex = 25;
     }
 
-    Graph* graph = new Graph(nVertex, false);
+    Graph* graph = new Graph(nVertex, true);
 
     string line;
     int id;
@@ -180,6 +180,12 @@ Graph* Parser::parseExtraFullyConnected() {
         getFloat(iss, distance);
 
         graph->setEdgeDistance(ori, dest, distance, true);
+    }
+
+    for (int i = 0; i < nVertex; i++) {
+        for (int j = i + 1; j < nVertex; j++) {
+            graph->getDistance(i, j);
+        }
     }
 
     return graph;
