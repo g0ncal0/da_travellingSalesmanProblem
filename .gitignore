@@ -1,10 +1,8 @@
 /cmake-build-debug
-<<<<<<< HEAD
 .idea
-<<<<<<< HEAD
-=======
-.idea
->>>>>>> 860c8d94dab69984e8ec8af5ac6eee149568289c
-=======
 /Data
->>>>>>> 08f763ea9435c86570b44e1bfa860373cda540df
+.DS_Store
+*/.DS_Store
+build_dir
+.idea
+/Data

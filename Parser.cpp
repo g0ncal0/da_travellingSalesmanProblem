@@ -70,7 +70,7 @@ Graph* Parser::parseToy() {
 
     numberVertex++;
 
-    Graph* graph = new Graph(numberVertex);
+    Graph* graph = new Graph(numberVertex, false);
     for (int i = 0; i < numberVertex; i++) graph->addVertex(i);
 
     ifstream ifs2(filename);
@@ -146,7 +146,7 @@ Graph* Parser::parseExtraFullyConnected() {
         nVertex = 25;
     }
 
-    Graph* graph = new Graph(nVertex);
+    Graph* graph = new Graph(nVertex, false);
 
     string line;
     int id;
@@ -210,7 +210,7 @@ Graph* Parser::parseRealWorld() {
         nVertex = 1000;
     }
 
-    Graph* graph = new Graph(nVertex);
+    Graph* graph = new Graph(nVertex, true);
 
     string line;
     int id;

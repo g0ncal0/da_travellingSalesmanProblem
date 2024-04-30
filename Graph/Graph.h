@@ -18,7 +18,7 @@ struct VInfo{
 };
 float calculateDistance(int latA, int lonA, int latB, int lonB);
 int getposition(int noVertexes, int a, int b);
-long factorial(int n);
+
 
 
 class Vertex{
@@ -29,6 +29,7 @@ protected:
     bool processing = false;
     float latitude;
     float longitude;
+    std::vector<int> adjVertex;
 
     //-1 for invalid...
     int nextVertex=-1; // contains the next vertex in the path
@@ -52,18 +53,21 @@ public:
 class Graph{
 protected:
     std::vector<Vertex*> vertexSet;    // vertex set
-    std::vector<float> data; // save it as negative if not in graph - if 0, it has not been calculated yet
+    std::vector<std::vector<float>*>* data; // save it as negative if not in graph - if 0, it has not been calculated yet
     int noVertexes;
     std::vector<VInfo> line;
-
+    bool infoAboutLocation = false;
 public:
 
     // Yes, you need the noVertexes when init the graph.. perharps we can do this by adding a line on each file with info of noVertexes
-    Graph(int noVertexes){
-        unsigned int sizeOfVector = (noVertexes * (noVertexes-1)) / (2);
-        data.resize(sizeOfVector);
+    // infoAboutLocation should be true if we have info about latitude and longitude of points
+    Graph(int noVertexes, bool infoAboutLocation){
+        this->infoAboutLocation = infoAboutLocation;
+        data = new std::vector<std::vector<float>*>(noVertexes - 1);
+        for(int i = 0; i < noVertexes; i++){
+            (*data)[i] = new std::vector<float>(noVertexes - 1 - i);
+        }
         this->noVertexes = noVertexes;
-        //line.resize(noVertexes);
         std::cout << "done" << std::endl;
     }
 
@@ -87,27 +91,54 @@ public:
         return vertexSet;
     }
 
+    bool isEdgeInGraph(int s, int e){
+        if(s >= noVertexes || e >= noVertexes || s < 0 || e < 0){
+            return false;
+        }
+        if(s == e){
+            return false;
+        }
+        if(s > e){
+            std::swap(s,e);
+        }
+        float distance = (*(*data)[s])[e - s - 1];
+        if(distance <= 0){
+            return false;
+        }
+        return true;
+    }
+
     float getDistance(int s, int e){
+        if(s >= noVertexes || e >= noVertexes || s < 0 || e < 0){
+            return false;
+        }
+        if(s == e){
+            return false;
+        }
+        if(s > e){
+            std::swap(s,e);
+        }
+
+        float distance = (*(*data)[s])[e - s - 1];
+
         //Acho que esta função está mal, se for negativo deve retornar negativo -> a verificação deve ser feita do outro lado
         //Vou alterar isto, qualquer coisa altera-se outra vez
-
-        float distance = data[getposition(noVertexes, s, e)];
+        if(infoAboutLocation){
         if(distance == 0){
             // calculate
             Vertex* sVertex = getVertex(s);
             Vertex* eVertex = getVertex(e);
             distance = - (calculateDistance(sVertex->getLat(), sVertex->getLon(), eVertex->getLat(), eVertex->getLon())); //aqui deve ser negativo, isto só vai chegar aqui caso o edge não exista no grafo
             // update in table
-            data[getposition(noVertexes, s, e)] = distance;
+            (*(*data)[s])[e - s - 1] = distance;
+        }
+        }
+        if(distance < 0){
+            return -distance;
         }
         return distance;
     }
 
-    void printDebug(){
-        for(float f : data){
-            std::cout << f;
-        }
-    }
 
     bool setEdgeDistance(int start, int end, float distance, bool existsInGraph){
         if(start >= noVertexes || end >= noVertexes || start < 0 || end < 0){
@@ -116,11 +147,15 @@ public:
         if(start == end){
             return false;
         }
+        if(start > end){
+            std::swap(start,end);
+        }
+
 
         if(existsInGraph){
-            data[getposition(noVertexes, start, end)] = distance;
+            (*(*data)[start])[end - start - 1] = distance;
         }else{
-            data[getposition(noVertexes, start, end)] = -distance;
+            (*(*data)[start])[end - start - 1] = -distance;
         }
 
         return true;
