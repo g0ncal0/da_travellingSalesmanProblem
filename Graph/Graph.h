@@ -71,6 +71,10 @@ public:
         std::cout << "done" << std::endl;
     }
 
+    int getNoVertexes(){
+        return noVertexes;
+    }
+
     void addVertex(int id) {
         Vertex* v = new Vertex(id);
         vertexSet.push_back(v);
