@@ -45,3 +45,20 @@ TIME DURATION: 3.755 ms
 Para v = 1000000: 1000000 execucoes:
 
 
+
+It may be important to run several processes, to build and debug yourself, you can
+follow this:
+
+- mkdir build-dir
+go inside it
+
+- cd build-dir
+then run cmake and point to the parent directory
+
+- cmake ..
+and finally run make
+
+- make
+and the program
+
+- ./DAProject2

@@ -10,7 +10,12 @@ int main() {
 
 
 
+    auto s = std::chrono::system_clock::now();
     Graph* g = Parser::parse();
+    auto e = std::chrono::system_clock::now();
+    auto d = e - s;
+
+    std::cout << "PARSER TIME DURATION: " << std::chrono::duration<double, std::nano>(d).count() << " ns\n";
 
     auto start = std::chrono::system_clock::now();
 
