@@ -16,7 +16,7 @@ bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, int &costToBeat, int n
 
     bool isPossible = false;
 
-    if (numberVisited == g->getVertexSet().size()) {
+    if (numberVisited == g->getNoVertexes()) {
         int cost = g->getDistance(0, id);
 
         if (cost < costToBeat) {
@@ -25,7 +25,7 @@ bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, int &costToBeat, int n
             isPossible = true;
         }
     } else {
-        for (int i = 0; i < g->getVertexSet().size(); i++) {
+        for (int i = 0; i < g->getNoVertexes(); i++) {
             int costEdge = g->getDistance(id, i);
             if (costEdge >= costToBeat) continue;
             int auxCostToBeat = costToBeat - costEdge;
