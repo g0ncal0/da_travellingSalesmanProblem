@@ -5,6 +5,7 @@
 #include <climits>
 #include "Algorithms.h"
 #include <queue>
+#include <algorithm>
 
 bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, int &costToBeat, int numberVisited) {
     Vertex *v = g->getVertex(id);
@@ -56,10 +57,7 @@ int Algorithms::TSPwithBacktracking(Graph *g) {
 }
 
 
-#include <vector>
-#include <algorithm>
 
-//#include <pair>
 void Algorithms::auxMST(Graph *g, Vertex *startVertex, std::map<Vertex *, std::vector<Vertex * >> &edges) {
     edges.clear();
 
@@ -120,19 +118,21 @@ void Algorithms::auxMST(Graph *g, Vertex *startVertex, std::map<Vertex *, std::v
 }
 
 //could be optimized to calculate the distance, rather than leaving it to the loop at the end
-void Algorithms::auxTriangleApproximationDFS(Vertex *vert, std::map<Vertex *, std::vector<Vertex * >> &edges,
+float Algorithms::auxTriangleApproximationDFS(Graph *g, Vertex *vert, std::map<Vertex *, std::vector<Vertex * >> &edges,
                                              Vertex *&currentLast) {
 
     vert->setVisited(true);
     currentLast->setNextVertex(vert->getId());
+    float sum=g->getDistance(currentLast->getId(),vert->getId());
     currentLast=vert;
+
 //for all mst edges, if destination not visited, destination.visit()
     for (Vertex *i: edges[vert]) {
         if (!i->isVisited()) {
-            auxTriangleApproximationDFS(i, edges, currentLast);
+             sum+= auxTriangleApproximationDFS(g,i, edges, currentLast);
         }
-
     }
+    return sum;
 }
 
 
@@ -155,16 +155,10 @@ float Algorithms::TSPwithTriangleApproximation(Graph *g, int startVertexId) {
     }
 
     Vertex *currentLast = vert;
-    auxTriangleApproximationDFS(vert, edges, currentLast);
-    currentLast->setNextVertex(startVertexId);
+    float sum=auxTriangleApproximationDFS(g, vert, edges, currentLast);
 
-    Vertex *help = vert;
-    float sum = 0;
-    while (true) {
-        sum += g->getDistance(help->getId(), help->getNextVertex());
-        help=g->getVertex(help->getNextVertex());
-        if(help==vert) break;
-    }
+    currentLast->setNextVertex(startVertexId);
+    sum+=g->getDistance(currentLast->getId(),vert->getId());
 
     return sum;
 
