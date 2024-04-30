@@ -29,6 +29,7 @@ bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, int &costToBeat, int n
     } else {
         for (int i = 0; i < g->getNoVertexes(); i++) {
             int costEdge = g->getDistance(id, i);
+            if (costEdge == 0) continue;
             if (costEdge >= costToBeat) continue;
             int auxCostToBeat = costToBeat - costEdge;
 
