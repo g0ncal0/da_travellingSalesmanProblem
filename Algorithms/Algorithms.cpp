@@ -6,6 +6,7 @@
 #include "Algorithms.h"
 #include <queue>
 #include <algorithm>
+#include <unordered_set>
 
 bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, int &costToBeat, int numberVisited) {
     Vertex *v = g->getVertex(id);
@@ -58,7 +59,7 @@ int Algorithms::TSPwithBacktracking(Graph *g) {
 
 
 
-void Algorithms::auxMST(Graph *g, Vertex *startVertex, std::map<Vertex *, std::vector<Vertex * >> &edges) {
+void Algorithms::auxMST(Graph *g, Vertex *startVertex, std::unordered_map<Vertex *, std::vector<Vertex * >> &edges) {
     edges.clear();
 
     for (Vertex *other: g->getVertexSet()) {
@@ -66,10 +67,10 @@ void Algorithms::auxMST(Graph *g, Vertex *startVertex, std::map<Vertex *, std::v
     }
 
 
-    std::map<Vertex*,std::set<Vertex*>*> sets;
+    std::unordered_map<Vertex*,std::unordered_set<Vertex*>*> sets;
     for (Vertex* vert: g->getVertexSet())
     {
-        sets[vert]=new std::set<Vertex*>({vert});
+        sets[vert]=new std::unordered_set<Vertex*>({vert});
     }
 
     std::vector<std::pair<Vertex*,Vertex*>> edgeVec;
@@ -118,7 +119,7 @@ void Algorithms::auxMST(Graph *g, Vertex *startVertex, std::map<Vertex *, std::v
 }
 
 //could be optimized to calculate the distance, rather than leaving it to the loop at the end
-float Algorithms::auxTriangleApproximationDFS(Graph *g, Vertex *vert, std::map<Vertex *, std::vector<Vertex * >> &edges,
+float Algorithms::auxTriangleApproximationDFS(Graph *g, Vertex *vert, std::unordered_map<Vertex *, std::vector<Vertex * >> &edges,
                                              Vertex *&currentLast) {
 
     vert->setVisited(true);
@@ -147,7 +148,7 @@ float Algorithms::TSPwithTriangleApproximation(Graph *g, int startVertexId) {
     for (auto vertex: g->getVertexSet()) {
         vertex->setVisited(false);
     }
-    std::map<Vertex *, std::vector<Vertex * >> edges;
+    std::unordered_map<Vertex *, std::vector<Vertex * >> edges;
     auxMST(g, vert, edges);
 
     for (auto vertex: g->getVertexSet()) {
