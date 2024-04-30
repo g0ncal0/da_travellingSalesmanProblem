@@ -153,18 +153,19 @@ float Algorithms::TSPwithTriangleApproximation(Graph *g, int startVertexId) {
     for (auto vertex: g->getVertexSet()) {
         vertex->setVisited(false);
     }
+
     Vertex *currentLast = vert;
     auxTriangleApproximationDFS(vert, edges, currentLast);
-
+    currentLast->setNextVertex(startVertexId);
 
     Vertex *help = vert;
     float sum = 0;
-    while (help != currentLast) {
-   //     std::cout<<g->getDistance(help->getId(), help->getNextVertex())<<"\n";
+    while (true) {
         sum += g->getDistance(help->getId(), help->getNextVertex());
         help=g->getVertex(help->getNextVertex());
+        if(help==vert) break;
     }
-    sum += g->getDistance(currentLast->getId(), vert->getId());
+
     return sum;
 
 }

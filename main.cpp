@@ -18,13 +18,10 @@ int main() {
     cout<< "O caminho e: "<<initialID;
 
     while (true) {
-        if (v->getNextVertex()==-1)
-        {
-            cout << " -> " << initialID;
-            break;
-        }
+
         cout << " -> " << v->getNextVertex();
         v = g->getVertex(v->getNextVertex());
+        if(v->getId()==initialID) break;
     }
 
 /*
