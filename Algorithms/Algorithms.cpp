@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <unordered_set>
 
-bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, int &costToBeat, int numberVisited) {
+bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, float &costToBeat, int numberVisited) {
     Vertex *v = g->getVertex(id);
 
     if (v->isVisited()) return false;
@@ -19,19 +19,19 @@ bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, int &costToBeat, int n
     bool isPossible = false;
 
     if (numberVisited == g->getNoVertexes()) {
-        int cost = g->getDistance(0, id);
+        float cost = g->getDistance(0, id);
 
-        if (cost < costToBeat) {
+        if ((cost < costToBeat) && (cost > 0)) {
             costToBeat = cost;
             v->setNextVertex(0);
             isPossible = true;
         }
     } else {
         for (int i = 0; i < g->getNoVertexes(); i++) {
-            int costEdge = g->getDistance(id, i);
+            float costEdge = g->getDistance(id, i);
             if (costEdge == 0) continue;
             if (costEdge >= costToBeat) continue;
-            int auxCostToBeat = costToBeat - costEdge;
+            float auxCostToBeat = costToBeat - costEdge;
 
             if (auxTSPwithBacktracking(g, i, auxCostToBeat, numberVisited)) {
                 costToBeat = auxCostToBeat + costEdge;
@@ -46,10 +46,10 @@ bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, int &costToBeat, int n
     return isPossible;
 }
 
-int Algorithms::TSPwithBacktracking(Graph *g) {
+float Algorithms::TSPwithBacktracking(Graph *g) {
     for (Vertex *v: g->getVertexSet()) v->setVisited(false);
 
-    int cost = INT_MAX;
+    float cost = INT_MAX;
 
     if (auxTSPwithBacktracking(g, 0, cost, 0)) {
         return cost;

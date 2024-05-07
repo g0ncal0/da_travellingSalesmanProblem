@@ -9,7 +9,7 @@
 #include <set>
 #include <unordered_map>
 class Algorithms {
-    static bool auxTSPwithBacktracking(Graph* g, int id, int& costToBeat, int numberVisited);
+    static bool auxTSPwithBacktracking(Graph* g, int id, float& costToBeat, int numberVisited);
     /**
      * A recursive depth-first search used by the triangular approximation algorithm to construct the final path.\n
      * Complexity: O(V + E)
@@ -29,7 +29,7 @@ class Algorithms {
      */
     static void auxMST(Graph* g,Vertex* startVertex,std::unordered_map<Vertex*,std::vector<Vertex*>>& edges);
 public:
-    static int TSPwithBacktracking(Graph* g);
+    static float TSPwithBacktracking(Graph* g);
 
     /**
      * An approximation algorithm for the TSP problem, using a triangular approximation algorithm. \n

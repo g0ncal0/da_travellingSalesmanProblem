@@ -56,5 +56,15 @@ int main() {
     std::cout << "\nTIME DURATION: " << std::chrono::duration<double, std::nano>(diff).count() << " ns";
     std::cout << "\nTIME DURATION: " << std::chrono::duration<double, std::milli>(diff).count() << " ms";
 
+    Vertex* v = g->getVertex(0);
+
+    std::cout << "O caminho é 0";
+    while (true) {
+        std::cout << " (" << g->getDistance(v->getId(), v->getNextVertex()) << ")";
+        std::cout << " -> " << v->getNextVertex();
+        v = g->getVertex(v->getNextVertex());
+        if (v->getId() == 0) break;
+    }
+
     return 0;
 }
