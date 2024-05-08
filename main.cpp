@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include "Graph/Graph.h"
 #include "Parser.h"
 #include "Algorithms/Algorithms.h"
@@ -7,55 +6,53 @@
 
 int main() {
 
-
-
-    Timer::start();
     Graph* g = Parser::parse();
-    Timer::finish("Parser");
 
-    bool c = true;
+
+    Menu::print("\nWelcome to the TSP Program.");
+    Menu::displayoptions();
+
+    int c = true;
+    float cost;
+
+
+
+
     while(c){
-        Menu::displayoptions();
         int i = Menu::chooseoption();
-        switch(i){
+        switch (i) {
             case 0:
-
-        }
-
-    }
-
-    std::cout << "O custo mínimo é: " << Algorithms::TSPwithBacktracking(g) << std::endl;
-
-/*
-    for (int i = 0; i < g->getVertexSet().size(); i++) std::cout << "Id = " << g->getVertexSet()[i]->getId() << "   Lat = " << g->getVertexSet()[i]->getLat() << std::endl;
-    int initialID=0;
-    std::cout<<"\nTriangular Approximation:\n";
-
-    //std::cout << "O custo minimo 2 e: " << Algorithms::TSPwithTriangleApproximation(g,initialID) << std::endl;
-    Vertex* v = g->getVertex(initialID);
-
-    /*
-    std::cout<< "O caminho e: "<<initialID;
-
-    while (true) {
-
-        std::cout << " -> " << v->getNextVertex();
-        v = g->getVertex(v->getNextVertex());
-        if(v->getId()==initialID) break;
-    }
-
-
-    for (int i = 0; i < g->getVertexSet().size(); i++) std::cout << "Id = " << g->getVertexSet()[i]->getId() << "   Lat = " << g->getVertexSet()[i]->getLat() << std::endl;
-
-    for (int i = 0; i < g->getVertexSet().size(); i++) {
-        for (int j = i + 1; j < g->getVertexSet().size(); j++) {
-            std::cout << "i = " << i << "   j = " << j << "   dist = " << g->getDistance(i, j) << std::endl;
+                c = false;
+                break;
+            case 1:
+                Menu::displayoptions();
+                break;
+            case 2:
+                cost = Algorithms::TSPwithBacktracking(g);
+                Menu::printInfoPath(g, 0, cost);
+                break;
+            case 3:
+                cost = Algorithms::TSPwithTriangleApproximation(g, 0);
+                Menu::printInfoPath(g, 0, cost);
+                break;
+            case 4:
+                cost = Algorithms::TSPbyEdgeOrdering(g);
+                Menu::printInfoPathByEdges(g, cost);
+                break;
+            default:
+                c = false;
+                break;
         }
     }
+
+    Menu::print("Thanks for using our program. This was developed by Filipe Correia, Gabriela Silva and Gonçalo Nunes.");
+
+    /* INSTRUÇÕES PARA TIRAR TEMPOS
+        auto s = std::chrono::system_clock::now();
+        auto e = std::chrono::system_clock::now();
+        auto d = e - s;
+        std::cout << "PARSER TIME DURATION: " << std::chrono::duration<double, std::nano>(d).count() << " ns\n";
     */
-
-
-
 
     return 0;
 }

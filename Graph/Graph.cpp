@@ -22,6 +22,13 @@ float calculateDistance(int latA, int lonA, int latB, int lonB){
 }
 
 
+bool sortedgeInfo(edgeInfo& a, edgeInfo& b){
+    if(a.distance < b.distance){
+        return true;
+    }
+    return false;
+}
+
 /**
  * Get the position of edge. Several sums and subtractions O(1)
  * @param noVertexes
@@ -40,7 +47,7 @@ int Graph::getposition(int a, int b){
     }
     // temos de fazer um somatório entre noVertexes - 1 e noVertexes - 1 - (a - 1);
     int auxsum = noVertexes - 1 + (noVertexes - 1 - (a-1));
-    int auxdif = (noVertexes -1 - (noVertexes - 1 - (a- 1))) + 1;
+    int auxdif = (noVertexes - 1 - (noVertexes - 1 - (a- 1))) + 1;
 
     int indexFirstElementOfA = (auxsum * auxdif) / 2;
 

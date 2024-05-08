@@ -17,6 +17,16 @@ int getposition(int noVertexes, int a, int b);
 
 
 
+struct edgeInfo{
+    int s;
+    int e;
+    float distance;
+};
+
+bool sortedgeInfo(edgeInfo& a, edgeInfo& b);
+
+
+
 class Vertex{
 protected:
     int id;
@@ -49,7 +59,7 @@ protected:
     std::vector<Vertex*> vertexSet;    // vertex set
     std::vector<std::vector<float>*>* data; // save it as negative if not in graph - if 0, it has not been calculated yet
     int noVertexes;
-    std::vector<char>* visited; // 0: unvisited, 1: visited, 2+: for special algorithms
+    std::vector<unsigned char>* visited; // 0: unvisited, 1: visited, 2+: for special algorithms
     std::vector<bool>* edgeUsed;
 
 
@@ -66,18 +76,10 @@ public:
             (*data)[i] = new std::vector<float>(noVertexes - 1 - i);
         }
         this->noVertexes = noVertexes;
-        visited = new std::vector<char>(noVertexes, false);
-        std::cout << "done" << std::endl;
+        visited = new std::vector<unsigned char>(noVertexes, false);
 
     }
-    ~Graph(){
-        for(auto e : *data){
-            delete [] e;
-        }
-        delete [] data;
-        delete [] visited;
-        delete [] edgeUsed;
-    }
+
 
     int getNoVertexes(){
         return noVertexes;
@@ -93,25 +95,45 @@ public:
             (*this->visited)[i] = 0;
         }
     }
-    std::vector<float>* getEdges(){
-        std::vector<float>* v = new std::vector<float>((noVertexes * (noVertexes - 1) / 2));
+    std::vector<float> getEdges(){
+        std::vector<float> v ((noVertexes * (noVertexes - 1) / 2));
         int index = 0;
 
         for(auto vec : *data){
             for(auto e : *vec){
-                (*v)[index] = e;
+                v[index] = e;
                 index++;
             }
         }
+        return v;
     }
+
+    std::vector<edgeInfo> getEdgesSorted(){
+        std::vector<float> edges = getEdges();
+        std::vector<edgeInfo> edgeSorted;
+        int s = 0;
+        int e = 1;
+        for(float edg : edges){
+            edgeInfo currentEdge = {s, e, edg};
+            e++;
+            edgeSorted.push_back(currentEdge);
+            if(e == noVertexes){
+                s++;
+                e = s +1;
+            }
+        }
+        std::sort(edgeSorted.begin(), edgeSorted.end(), sortedgeInfo);
+        return edgeSorted;
+    }
+
 
     void setVisited(int id, bool visited){
         (*this->visited)[id] = visited ? 1 : 0;
     }
-    void complexSetVisited(int id, char visited){
-        (*this->visited)[id] = visited ? 1 : 0;
+    void complexSetVisited(int id, unsigned char visited){
+        (*this->visited)[id] = visited;
     }
-    char complexGetVisited(int id){
+    unsigned char complexGetVisited(int id){
         return (*this->visited)[id];
     }
     bool getVisited(int id){
@@ -203,7 +225,7 @@ public:
 
 
     void initializeEdgesUsed(){
-        for(int i = 0; i < (noVertexes* (noVertexes - 1) / 2); i++){
+        for(int i = 0; i < (noVertexes * (noVertexes - 1)) / 2; i++){
             (*edgeUsed)[i] = false;
         }
     }
