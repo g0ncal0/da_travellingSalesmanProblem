@@ -4,67 +4,50 @@
 #include "Parser.h"
 #include <chrono>
 #include "Algorithms/Algorithms.h"
+#include "Menu.h"
 
 
 int main() {
-
-
-
-    auto s = std::chrono::system_clock::now();
     Graph* g = Parser::parse();
-    auto e = std::chrono::system_clock::now();
-    auto d = e - s;
 
+    Menu::print("\nWelcome to the TSP Program.");
+    Menu::displayoptions();
 
-    std::cout << "PARSER TIME DURATION: " << std::chrono::duration<double, std::nano>(d).count() << " ns\n";
+    int c = true;
+    float cost;
 
+    while(c){
+        int i = Menu::chooseoption();
+        switch (i) {
+            case 0:
+                c = false;
+                break;
+            case 1:
+                Menu::displayoptions();
+                break;
+            case 2:
+                cost = Algorithms::TSPwithBacktracking(g);
+                Menu::printInfoPath(g, 0, cost);
+                break;
+            case 3:
+                cost = Algorithms::TSPwithTriangleApproximation(g, 0);
+                Menu::printInfoPath(g, 0, cost);
+                break;
 
-    auto start = std::chrono::system_clock::now();
-    std::cout << "O custo mínimo é: " << Algorithms::TSPwithBacktracking(g) << std::endl;
-
-/*
-    for (int i = 0; i < g->getVertexSet().size(); i++) std::cout << "Id = " << g->getVertexSet()[i]->getId() << "   Lat = " << g->getVertexSet()[i]->getLat() << std::endl;
-    int initialID=0;
-    std::cout<<"\nTriangular Approximation:\n";
-
-    //std::cout << "O custo minimo 2 e: " << Algorithms::TSPwithTriangleApproximation(g,initialID) << std::endl;
-    Vertex* v = g->getVertex(initialID);
-
-    /*
-    std::cout<< "O caminho e: "<<initialID;
-
-    while (true) {
-
-        std::cout << " -> " << v->getNextVertex();
-        v = g->getVertex(v->getNextVertex());
-        if(v->getId()==initialID) break;
-    }
-
-
-    for (int i = 0; i < g->getVertexSet().size(); i++) std::cout << "Id = " << g->getVertexSet()[i]->getId() << "   Lat = " << g->getVertexSet()[i]->getLat() << std::endl;
-
-    for (int i = 0; i < g->getVertexSet().size(); i++) {
-        for (int j = i + 1; j < g->getVertexSet().size(); j++) {
-            std::cout << "i = " << i << "   j = " << j << "   dist = " << g->getDistance(i, j) << std::endl;
+            default:
+                c = false;
+                break;
         }
     }
-    */
-    auto end = std::chrono::system_clock::now();
 
-    auto diff = end - start;
+    Menu::print("Thanks for using our program. This was developed by Filipe Correia, Gabriela Silva and Gonçalo Nunes.");
 
-    std::cout << "\nTIME DURATION: " << std::chrono::duration<double, std::nano>(diff).count() << " ns";
-    std::cout << "\nTIME DURATION: " << std::chrono::duration<double, std::milli>(diff).count() << " ms";
-
-    Vertex* v = g->getVertex(0);
-
-    std::cout << "O caminho é 0";
-    while (true) {
-        std::cout << " (" << g->getDistance(v->getId(), v->getNextVertex()) << ")";
-        std::cout << " -> " << v->getNextVertex();
-        v = g->getVertex(v->getNextVertex());
-        if (v->getId() == 0) break;
-    }
+    /* INSTRUÇÕES PARA TIRAR TEMPOS
+    auto s = std::chrono::system_clock::now();
+    auto e = std::chrono::system_clock::now();
+    auto d = e - s;
+    std::cout << "PARSER TIME DURATION: " << std::chrono::duration<double, std::nano>(d).count() << " ns\n";
+     */
 
     return 0;
 }

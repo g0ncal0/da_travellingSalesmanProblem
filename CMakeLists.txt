@@ -9,4 +9,6 @@ add_executable(DAProject2 main.cpp
         Algorithms/Algorithms.h
         Algorithms/Algorithms.cpp
         Parser.h
-        Parser.cpp)
+        Parser.cpp
+        Menu.h
+        Menu.cpp)

@@ -68,7 +68,6 @@ public:
             (*data)[i] = new std::vector<float>(noVertexes - 1 - i);
         }
         this->noVertexes = noVertexes;
-        std::cout << "done" << std::endl;
     }
 
     int getNoVertexes(){
