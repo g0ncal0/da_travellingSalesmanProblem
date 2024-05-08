@@ -165,3 +165,34 @@ float Algorithms::TSPwithTriangleApproximation(Graph *g, int startVertexId) {
     return sum;
 
 }
+
+
+/**
+ * Gives an approximated result to TSP problem by sorting edges and choosing by that order
+ * @param g
+ * @return
+ */
+float Algorithms::TSPbyEdgeOrdering(Graph* g){
+
+    std::vector<float> sortedEdges = {}; // sort the edges
+
+    int count = g->getNoVertexes() -1; // how many edges to find before ending
+    int index = 0;
+    // Cycle through the edges
+        // get current edge: name it "E"
+        // if the vertexes of E have not yet been visited, add them as visited and mark the edge as used.
+        // if the vertexes have been used just once max!, add them too
+        // if vertexes have been used twice, ignore
+    g->initializeEdgesUsed();
+    g->initializeVisited();
+
+    while(count != 0){
+        if(index >= (g->getNoVertexes() * (g->getNoVertexes() - 1) / 2)){
+            return 0;
+        }
+        if()
+
+    }
+
+
+}

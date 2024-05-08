@@ -2,24 +2,28 @@
 
 #include "Graph/Graph.h"
 #include "Parser.h"
-#include <chrono>
 #include "Algorithms/Algorithms.h"
-
+#include "Menu.h"
 
 int main() {
 
 
 
-    auto s = std::chrono::system_clock::now();
+    Timer::start();
     Graph* g = Parser::parse();
-    auto e = std::chrono::system_clock::now();
-    auto d = e - s;
+    Timer::finish("Parser");
 
+    bool c = true;
+    while(c){
+        Menu::displayoptions();
+        int i = Menu::chooseoption();
+        switch(i){
+            case 0:
 
-    std::cout << "PARSER TIME DURATION: " << std::chrono::duration<double, std::nano>(d).count() << " ns\n";
+        }
 
+    }
 
-    auto start = std::chrono::system_clock::now();
     std::cout << "O custo mínimo é: " << Algorithms::TSPwithBacktracking(g) << std::endl;
 
 /*
@@ -49,12 +53,9 @@ int main() {
         }
     }
     */
-    auto end = std::chrono::system_clock::now();
 
-    auto diff = end - start;
 
-    std::cout << "\nTIME DURATION: " << std::chrono::duration<double, std::nano>(diff).count() << " ns";
-    std::cout << "\nTIME DURATION: " << std::chrono::duration<double, std::milli>(diff).count() << " ms";
+
 
     return 0;
 }

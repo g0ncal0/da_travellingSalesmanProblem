@@ -29,6 +29,10 @@ class Algorithms {
      */
     static void auxMST(Graph* g,Vertex* startVertex,std::unordered_map<Vertex*,std::vector<Vertex*>>& edges);
 public:
+
+
+    static float TSPbyEdgeOrdering(Graph* g);
+
     static int TSPwithBacktracking(Graph* g);
 
     /**
