@@ -20,7 +20,7 @@ int main() {
 
 
     auto start = std::chrono::system_clock::now();
-    std::cout << "O custo mínimo é: " << Algorithms::TSPwithBacktracking(g) << std::endl;
+    std::cout << "O custo minimo é: " << Algorithms::TSPwithTriangleApproximation(g,0) << std::endl;
 
 /*
     for (int i = 0; i < g->getVertexSet().size(); i++) std::cout << "Id = " << g->getVertexSet()[i]->getId() << "   Lat = " << g->getVertexSet()[i]->getLat() << std::endl;
@@ -53,7 +53,20 @@ int main() {
 
     auto diff = end - start;
 
-    std::cout << "\nTIME DURATION: " << std::chrono::duration<double, std::nano>(diff).count() << " ns";
+   // std::cout << "\nTIME DURATION: " << std::chrono::duration<double, std::nano>(diff).count() << " ns";
+    std::cout << "\nTIME DURATION: " << std::chrono::duration<double, std::milli>(diff).count() << " ms\n";
+
+
+
+    start = std::chrono::system_clock::now();
+    double res;
+    std::cout <<"Existe? "<<(Algorithms::TSPrealWorld(g,0,res)?"Sim":"Nao")<< ". O custo minimo e: " << res << std::endl;
+
+    end = std::chrono::system_clock::now();
+
+    diff = end - start;
+
+    //std::cout << "\nTIME DURATION: " << std::chrono::duration<double, std::nano>(diff).count() << " ns";
     std::cout << "\nTIME DURATION: " << std::chrono::duration<double, std::milli>(diff).count() << " ms";
 
     return 0;

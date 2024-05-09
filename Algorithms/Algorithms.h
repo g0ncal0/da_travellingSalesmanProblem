@@ -39,6 +39,8 @@ public:
      * @return The length of the path found
      */
     static float TSPwithTriangleApproximation(Graph* g, int startVertexId);
+
+    static bool TSPrealWorld(Graph* g, int startVertex, double &resultLength);
 };
 
 

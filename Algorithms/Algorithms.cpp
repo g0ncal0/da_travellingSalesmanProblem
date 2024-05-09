@@ -7,7 +7,7 @@
 #include <queue>
 #include <algorithm>
 #include <unordered_set>
-
+#include <limits>
 bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, int &costToBeat, int numberVisited) {
     Vertex *v = g->getVertex(id);
 
@@ -164,4 +164,58 @@ float Algorithms::TSPwithTriangleApproximation(Graph *g, int startVertexId) {
 
     return sum;
 
+}
+
+#define VERY_STUPID_TEST_HEURISTIC
+
+
+#ifdef VERY_STUPID_TEST_HEURISTIC
+bool TSPrealWorldRec(Graph* g, Vertex* currentVertex,int depth,int startVertex,double &length)
+{
+    depth++;
+    currentVertex->setVisited(true);
+    if (depth==g->getNoVertexes())
+    {
+        if(g->isEdgeInGraph(currentVertex->getId(),startVertex))
+        {
+            currentVertex->setNextVertex(startVertex);
+            length+=g->getDistance(currentVertex->getId(),startVertex);
+            return true;
+        }
+        return false;
+    }else{
+    Vertex* minVert=0;
+    float minLength=std::numeric_limits<float>::max();
+    for (Vertex* other:g->getVertexSet()) {
+        float dis=g->getDistance(currentVertex->getId(),other->getId());
+        if (!other->isVisited()&&g->isEdgeInGraph(currentVertex->getId(),other->getId())&&dis<minLength)
+        {
+            minLength=dis;
+            minVert=other;
+        }
+    }
+    if (minVert)
+    {
+            length+=minLength;
+            currentVertex->setNextVertex(minVert->getId());
+            return TSPrealWorldRec(g,minVert,depth,startVertex,length);
+
+    }else
+    {return false;
+    }
+    }
+}
+#endif
+
+bool Algorithms::TSPrealWorld(Graph* g, int startVertex, double &resultLength)
+{
+   resultLength=0;
+   Vertex* vert=g->getVertex(startVertex);
+   for (Vertex* v:g->getVertexSet()) {
+    v->setVisited(false);
+    v->setNextVertex(0);
+   }
+#ifdef VERY_STUPID_TEST_HEURISTIC
+return TSPrealWorldRec(g,vert, 0,startVertex,resultLength);
+#endif
 }
