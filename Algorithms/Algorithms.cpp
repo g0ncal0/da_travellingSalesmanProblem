@@ -185,7 +185,8 @@ bool TSPrealWorldRec(Graph* g, Vertex* currentVertex,int depth,int startVertex,d
             return true;
         }
         return false;
-    }else{
+    }
+
     Vertex* minVert=0;
     float minLength=std::numeric_limits<float>::max();
     for (Vertex* other:g->getVertexSet()) {
@@ -206,7 +207,7 @@ bool TSPrealWorldRec(Graph* g, Vertex* currentVertex,int depth,int startVertex,d
     {
         return false;
     }
-    }
+
 }
 #endif
 

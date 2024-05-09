@@ -49,8 +49,8 @@ int main() {
                 {   double dCost=0;
                     bool success=Algorithms::TSPrealWorld(g,0,dCost);
                     std::cout<<(success?"Success!\n":"Failure!\n");
-                    Menu::printInfoPath(g, 01,dCost);
-                    Menu::askOptimize(g, 0, cost);
+                    Menu::printInfoPath(g, 0,dCost);
+                    Menu::askOptimize(g, 0, dCost);
                 }
             default:
                 c = false;

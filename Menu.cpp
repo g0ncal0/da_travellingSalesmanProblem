@@ -67,7 +67,7 @@ void Menu::printInfoPath(Graph* g, int v0, float cost) {
         std::cout << " ->(" << g->getDistance(v->getId(), v->getNextVertex()) << ")";
         std::cout << "-> " << v->getNextVertex();
         v = g->getVertex(v->getNextVertex());
-        if (v->getId() == 0) break;
+        if (v->getId() == v0) break;
     }
 
     std::cout << std::endl << std::endl;
