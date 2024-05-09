@@ -151,7 +151,7 @@ public:
 
     Vertex* getVertex(int id){return vertexSet[id];}
 
-    std::vector<Vertex*> getVertexSet() const{
+    const std::vector<Vertex*>& getVertexSet() const{
         return vertexSet;
     }
 
