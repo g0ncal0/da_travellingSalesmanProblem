@@ -42,6 +42,10 @@ public:
      * @return The length of the path found
      */
     static float TSPwithTriangleApproximation(Graph* g, int startVertexId);
+
+    static float TSPChristofides(Graph* g);
+
+    static float twoOpt(Graph* g, int v0, float cost);
 };
 
 

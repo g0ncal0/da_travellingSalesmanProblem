@@ -7,6 +7,7 @@
 #include <queue>
 #include <algorithm>
 #include <unordered_set>
+#include <stack>
 
 bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, float &costToBeat, int numberVisited) {
     Vertex *v = g->getVertex(id);
@@ -213,4 +214,111 @@ float Algorithms::TSPbyEdgeOrdering(Graph* g){
 
     std::cout << res;
     return res;
+}
+
+std::vector<Vertex*> getOddVertexesInTree(const std::unordered_map<Vertex *, std::vector<Vertex * >>& edges) {
+    std::vector<Vertex*> oddVertexes;
+
+    for (const auto& pair: edges) {
+        if (pair.second.size() % 2) oddVertexes.push_back(pair.first);
+    }
+
+    return oddVertexes;
+}
+
+float Algorithms::TSPChristofides(Graph* g) {
+    Vertex *vert = g->getVertex(0);
+    if (!vert) {
+        return -1;
+    }
+
+    for (auto vertex: g->getVertexSet()) {
+        vertex->setVisited(false);
+    }
+
+    std::unordered_map<Vertex *, std::vector<Vertex * >> edges;
+    auxMST(g, vert, edges);
+
+    for (auto vertex: g->getVertexSet()) {
+        vertex->setVisited(false);
+    }
+
+    std::vector<Vertex*> oddVertexes = getOddVertexesInTree(edges);
+
+
+
+    return 0.0;
+}
+
+void swap(std::vector<int>& path, int a, int b) {
+    std::stack<int> aux;
+
+    int size = path.size();
+    int index;
+    bool toChange = false;
+
+    for (int i = 0; i < size; i++) {
+        if (path[i] == a) {
+            toChange = true;
+            index = i;
+        }
+
+        if (toChange) {
+            aux.push(path[i]);
+        }
+
+        if (path[i] == b) break;
+    }
+
+    while (!aux.empty()) {
+        path[index] = aux.top();
+        aux.pop();
+        index++;
+    }
+}
+
+float Algorithms::twoOpt(Graph *g, int v0, float cost) {
+    std::vector<int> path;
+
+    Vertex* v = g->getVertex(v0);
+
+    while (true) {
+        path.push_back(v->getId());
+        v = g->getVertex(v->getNextVertex());
+        if (v->getId() == 0) break;
+    }
+
+    path.push_back(0);
+
+    float oldTrace;
+    float newTrace;
+
+    bool better = true;
+
+    while(better) {
+        better = false;
+
+        for (int i = 1; i < (path.size() - 2); i++) {
+            for (int j = i + 2; j < (path.size() - 1); j++) {
+                oldTrace = g->getDistance(path[i], path[i + 1]) + g->getDistance(path[j], path[j + 1]);
+                newTrace = g->getDistance(path[i], path[j]) + g->getDistance(path[i + 1], path[j + 1]);
+
+                if (newTrace < oldTrace) {
+                    cost -= (oldTrace - newTrace);
+                    swap(path, path[i + 1], path[j]);
+
+                    better = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    //atualizar o path no grafo
+    for (int i = 1; i <= g->getNoVertexes(); i++) {
+        v->setNextVertex(path[i]);
+        v = g->getVertex(v->getNextVertex());
+    }
+
+    return cost;
 }

@@ -57,7 +57,7 @@ std::string Menu::getInput(std::string text){
 }
 
 void Menu::printInfoPath(Graph* g, int v0, float cost) {
-    std::cout << "O custo minimo 2 é: " << cost << std::endl;
+    std::cout << "O custo minimo é: " << cost << std::endl;
 
     Vertex* v = g->getVertex(v0);
 
@@ -75,4 +75,18 @@ void Menu::printInfoPath(Graph* g, int v0, float cost) {
 
 void Menu::printInfoPathByEdges(Graph* g, float cost){
     std::cout << "O custo minimo é: " << cost << std::endl;
+}
+
+void Menu::askOptimize(Graph* g, int v0, float cost) {
+    char answer;
+
+    std::cout << "Do you want to optimize this result?\nYour answer: (y / n) ";
+    std::cin >> answer;
+
+    if (answer == 'y') {
+        cost = Algorithms::twoOpt(g, v0, cost);
+
+        std::cout << "\nThese are the optimized results:\n";
+        Menu::printInfoPath(g, 0, cost);
+    }
 }

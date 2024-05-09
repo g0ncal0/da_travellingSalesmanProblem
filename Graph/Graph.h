@@ -9,7 +9,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-
+#include <algorithm>
 
 
 float calculateDistance(int latA, int lonA, int latB, int lonB);

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include "Algorithms/Algorithms.h"
 
 class Graph;
 
@@ -25,6 +26,7 @@ public:
     static std::string getInput(std::string text);
     static void printInfoPath(Graph* g, int v0, float cost);
     static void printInfoPathByEdges(Graph* g, float cost);
+    static void askOptimize(Graph* g, int v0, float cost);
 };
 
 
