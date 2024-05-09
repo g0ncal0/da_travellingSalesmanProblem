@@ -9,21 +9,26 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 
-// struct com distância, bool ifIsInOriginalGraph
-struct VInfo{
-    float distance = 0;
-    bool isInGraph = false;
-};
 float calculateDistance(int latA, int lonA, int latB, int lonB);
 int getposition(int noVertexes, int a, int b);
 
 
 
+struct edgeInfo{
+    int s;
+    int e;
+    float distance;
+};
+
+bool sortedgeInfo(edgeInfo& a, edgeInfo& b);
+
+
+
 class Vertex{
 protected:
-    //std::vector<Edge *> adj;
     int id;
     bool visited = false;
     bool processing = false;
@@ -33,7 +38,6 @@ protected:
 
     //-1 for invalid...
     int nextVertex=-1; // contains the next vertex in the path
-    //std::vector<Edge *> incoming;
 
 public:
     Vertex(int id, float lat, float lon) : id(id), latitude(lat), longitude(lon){};
@@ -55,21 +59,27 @@ protected:
     std::vector<Vertex*> vertexSet;    // vertex set
     std::vector<std::vector<float>*>* data; // save it as negative if not in graph - if 0, it has not been calculated yet
     int noVertexes;
-    std::vector<VInfo> line;
-    bool infoAboutLocation = false;
+    std::vector<unsigned char>* visited; // 0: unvisited, 1: visited, 2+: for special algorithms
+    std::vector<bool>* edgeUsed;
+
+
+private:
+    int getposition(int a, int b);
+
 public:
 
     // Yes, you need the noVertexes when init the graph.. perharps we can do this by adding a line on each file with info of noVertexes
-    // infoAboutLocation should be true if we have info about latitude and longitude of points
-    Graph(int noVertexes, bool infoAboutLocation){
-        this->infoAboutLocation = infoAboutLocation;
+    Graph(int noVertexes){
         data = new std::vector<std::vector<float>*>(noVertexes - 1);
+        edgeUsed = new std::vector<bool>((noVertexes * (noVertexes - 1))/ 2); // to store the edges that were used.
         for(int i = 0; i < noVertexes; i++){
             (*data)[i] = new std::vector<float>(noVertexes - 1 - i);
         }
         this->noVertexes = noVertexes;
-        std::cout << "done" << std::endl;
+        visited = new std::vector<unsigned char>(noVertexes, false);
+
     }
+
 
     int getNoVertexes(){
         return noVertexes;
@@ -78,6 +88,56 @@ public:
     void addVertex(int id) {
         Vertex* v = new Vertex(id);
         vertexSet.push_back(v);
+    }
+
+    void initializeVisited(){
+        for(int i = 0; i < noVertexes; i++){
+            (*this->visited)[i] = 0;
+        }
+    }
+    std::vector<float> getEdges(){
+        std::vector<float> v ((noVertexes * (noVertexes - 1) / 2));
+        int index = 0;
+
+        for(auto vec : *data){
+            for(auto e : *vec){
+                v[index] = e;
+                index++;
+            }
+        }
+        return v;
+    }
+
+    std::vector<edgeInfo> getEdgesSorted(){
+        std::vector<float> edges = getEdges();
+        std::vector<edgeInfo> edgeSorted;
+        int s = 0;
+        int e = 1;
+        for(float edg : edges){
+            edgeInfo currentEdge = {s, e, edg};
+            e++;
+            edgeSorted.push_back(currentEdge);
+            if(e == noVertexes){
+                s++;
+                e = s +1;
+            }
+        }
+        std::sort(edgeSorted.begin(), edgeSorted.end(), sortedgeInfo);
+        return edgeSorted;
+    }
+
+
+    void setVisited(int id, bool visited){
+        (*this->visited)[id] = visited ? 1 : 0;
+    }
+    void complexSetVisited(int id, unsigned char visited){
+        (*this->visited)[id] = visited;
+    }
+    unsigned char complexGetVisited(int id){
+        return (*this->visited)[id];
+    }
+    bool getVisited(int id){
+        return (*this->visited)[id] != 0;
     }
 
     void addVertex(int id, float latitude, float longitude) {
@@ -125,9 +185,8 @@ public:
 
         float distance = (*(*data)[s])[e - s - 1];
 
-        //Acho que esta função está mal, se for negativo deve retornar negativo -> a verificação deve ser feita do outro lado
-        //Vou alterar isto, qualquer coisa altera-se outra vez
-        if(infoAboutLocation){
+        // Acho que esta função está mal, se for negativo deve retornar negativo -> a verificação deve ser feita do outro lado
+
         if(distance == 0){
             // calculate
             Vertex* sVertex = getVertex(s);
@@ -135,7 +194,6 @@ public:
             distance = - (calculateDistance(sVertex->getLat(), sVertex->getLon(), eVertex->getLat(), eVertex->getLon())); //aqui deve ser negativo, isto só vai chegar aqui caso o edge não exista no grafo
             // update in table
             (*(*data)[s])[e - s - 1] = distance;
-        }
         }
         if(distance < 0){
             return -distance;
@@ -163,6 +221,28 @@ public:
         }
 
         return true;
+    }
+
+
+    void initializeEdgesUsed(){
+        for(int i = 0; i < (noVertexes * (noVertexes - 1)) / 2; i++){
+            (*edgeUsed)[i] = false;
+        }
+    }
+
+
+    void setEdgeUsed(int start, int end, bool used){
+        if(start >= noVertexes || end >= noVertexes || start < 0 || end < 0){
+            return;
+        }
+        if(start == end){
+            return;
+        }
+        (*edgeUsed)[getposition(start, end)] = used;
+    }
+
+    bool getEdgeUsed(int start, int end){
+        return (*edgeUsed)[getposition(start, end)];
     }
 };
 
