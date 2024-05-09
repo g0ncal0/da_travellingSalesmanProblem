@@ -75,6 +75,9 @@ public:
         for(int i = 0; i < noVertexes; i++){
             (*data)[i] = new std::vector<float>(noVertexes - 1 - i);
         }
+        for(int i = 0; i < noVertexes; i++){
+            (*edgeUsed)[i] = false;
+        }
         this->noVertexes = noVertexes;
         visited = new std::vector<unsigned char>(noVertexes, false);
 

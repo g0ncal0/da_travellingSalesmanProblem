@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <unordered_set>
 #include <stack>
+#include <limits>
 
 bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, float &costToBeat, int numberVisited) {
     Vertex *v = g->getVertex(id);
@@ -236,14 +237,31 @@ float Algorithms::TSPChristofides(Graph* g) {
         vertex->setVisited(false);
     }
 
-    std::unordered_map<Vertex *, std::vector<Vertex * >> edges;
+    //first mst algorithm
+    /*std::unordered_map<Vertex *, std::vector<Vertex * >> edges;
     auxMST(g, vert, edges);
 
-    for (auto vertex: g->getVertexSet()) {
+    for (auto& p : edges) {
+        for (auto& v : p.second) {
+            std::cout << p.first->getId() << " -> " << v->getId() << std::endl;
+        }
+    }*/
+
+    //second mst algorithm
+    anotherMST(g, 0);
+    for (int i = 0; i < g->getNoVertexes(); i++) {
+        for (int j = i + 1; j < g->getNoVertexes(); j++) {
+            if (g->getEdgeUsed(i, j)) {
+                std::cout << g->getVertex(i)->getId() << " -> " << g->getVertex(j)->getId() << std::endl;
+            }
+        }
+    }
+
+    /*for (auto vertex: g->getVertexSet()) {
         vertex->setVisited(false);
     }
 
-    std::vector<Vertex*> oddVertexes = getOddVertexesInTree(edges);
+    std::vector<Vertex*> oddVertexes = getOddVertexesInTree(edges);*/
 
 
 
@@ -321,4 +339,52 @@ float Algorithms::twoOpt(Graph *g, int v0, float cost) {
     }
 
     return cost;
+}
+
+bool isValidEdge(int u, int v, Graph* g) {
+    bool uInMST = g->getVertex(u)->isVisited();
+    bool vInMST = g->getVertex(v)->isVisited();
+
+    if (uInMST && vInMST)
+        return false;
+    if ((!uInMST) && (!vInMST))
+        return false;
+
+    return true;
+}
+
+void Algorithms::anotherMST(Graph* g, int v0) {
+    //estou a assumir que o vetor que armazena se a edge existe começa com tudo a falso para eu usar esse valor para dizer se a edge está ou não na MST, talvez seja preciso inicializar isso à mão depois
+
+    g->getVertex(v0)->setVisited(true);
+    int sizeMST = 1;
+    int sizeGraph = g->getNoVertexes();
+    float distance;
+    int a, b;
+
+    while (sizeMST < sizeGraph) {
+        float min = std::numeric_limits<float>::max();
+        a = b = -1;
+
+        for (int i = 0; i < sizeGraph; i++) {
+            for (int j = i + 1; j < sizeGraph; j++) {
+                distance = g->getDistance(i, j);
+                if (distance < min) {
+                    if (isValidEdge(i, j, g)) {
+                        min = distance;
+                        a = i;
+                        b = j;
+                    }
+                }
+            }
+        }
+
+        if (a != -1 && b != -1) {
+            sizeMST++;
+            g->getVertex(a)->setVisited(true);
+            g->getVertex(b)->setVisited(true);
+            g->setEdgeUsed(a, b, true);
+        }
+        else break;
+    }
 }
