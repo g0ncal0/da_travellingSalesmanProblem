@@ -171,51 +171,43 @@ float Algorithms::TSPwithTriangleApproximation(Graph *g, int startVertexId) {
 
 
 /**
- * Gives an approximated result to TSP problem by sorting edges and choosing by that order
- * @param g
+ * Gives an approximated result to TSP problem using greedy approach
+ * @param g Graph assumed to be complete
  * @return
- */
-float Algorithms::TSPbyEdgeOrdering(Graph* g){
+*/
+float Algorithms::TSPGreedy(Graph* g){
+    g->initializeVisited();
+    float sum = 0;
 
+    int i = g->getNoVertexes() - 1;
+    Vertex* current = g->getVertex(0); // starts at vertex 0
 
-    std::vector<edgeInfo> sortedEdges = g->getEdgesSorted(); // sort the edges
-
-    int count = g->getNoVertexes(); // how many edges to find before ending
-    int index = 0;
-    // Cycle through the edges
-        // get current edge: name it "E"
-        // if the vertexes of E have not yet been visited, add them as visited and mark the edge as used.
-        // if the vertexes have been used just once max!, add them too
-        // if vertexes have been used twice, ignore
-
-    g->initializeEdgesUsed(); // for edges
-    g->initializeVisited(); // for vertexes
-
-    float res = 0;
-
-    while(count != 0){
-        if(index >= (g->getNoVertexes() * (g->getNoVertexes() - 1)) / 2){
-            return res;
+    while(i > 0){
+        float min = std::numeric_limits<float>::max(); //
+        int indexNext = -1;
+        for(int j = 0; j < g->getNoVertexes(); j++){
+            if(current->getId() != j && !g->getVisited(j)){ // is not the same vertex and is not visited yet
+                int cmin = g->getDistance(current->getId(),j); // get the distance between i and other vertexes to find min.
+                if(cmin < min){
+                    min = cmin;
+                    indexNext = j; // the index of the element that will follow current
+                }
+            }
         }
-        edgeInfo currentEdge = sortedEdges[index]; // E
-        if(currentEdge.distance == 0){
-            index++;
-            continue;
-        }
-        if(g->complexGetVisited(currentEdge.e) != 2 && g->complexGetVisited(currentEdge.s) != 2){
-            g->complexSetVisited(currentEdge.e, g->complexGetVisited(currentEdge.e) + 1);
-            g->complexSetVisited(currentEdge.s, g->complexGetVisited(currentEdge.s) + 1);
-            g->setEdgeUsed(currentEdge.e, currentEdge.s,true);
-            res = res + currentEdge.distance;
-            std::cout << "(" << currentEdge.s << "," << currentEdge.e << ")";
-            count--;
-        }
-        index++;
+        sum += min;
+        current->setNextVertex(indexNext);
+        g->setVisited(current->getId(), true);
+        i--;
+        current = g->getVertex(indexNext);
     }
 
-    std::cout << res;
-    return res;
+    current->setNextVertex(0);
+    sum += g->getDistance(0, current->getId());
+    return sum;
 }
+
+
+
 
 std::vector<Vertex*> getOddVertexesInTree(const std::unordered_map<Vertex *, std::vector<Vertex * >>& edges) {
     std::vector<Vertex*> oddVertexes;

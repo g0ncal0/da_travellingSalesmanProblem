@@ -37,8 +37,8 @@ int main() {
                 Menu::askOptimize(g, 0, cost);
                 break;
             case 4:
-                cost = Algorithms::TSPbyEdgeOrdering(g);
-                Menu::printInfoPathByEdges(g, cost);
+                cost = Algorithms::TSPGreedy(g);
+                Menu::printInfoPath(g, 0, cost);
                 Menu::askOptimize(g, 0, cost);
                 break;
             case 5:
