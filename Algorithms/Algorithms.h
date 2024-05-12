@@ -30,7 +30,6 @@ class Algorithms {
     static void auxMST(Graph* g,Vertex* startVertex,std::unordered_map<Vertex*,std::vector<Vertex*>>& edges);
 public:
 
-    static float TSPbyEdgeOrdering(Graph* g);
 
     static float TSPwithBacktracking(Graph* g);
 
@@ -43,12 +42,17 @@ public:
      */
     static float TSPwithTriangleApproximation(Graph* g, int startVertexId);
 
-    static bool TSPrealWorld(Graph* g, int startVertex, double &resultLength);
+    static bool TSPrealWorld1(Graph* g, int startVertex, double &resultLength);
+
+    static bool TSPrealWorld2(Graph* g, int startVertex, double &resultLength);
+
+    static float TSPGreedy(Graph* g);
 
     static float TSPChristofides(Graph* g);
 
     static float twoOpt(Graph* g, int v0, float cost);
 
+    static void anotherMST(Graph* g, int v0);
 };
 
 

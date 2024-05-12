@@ -37,8 +37,8 @@ int main() {
                 Menu::askOptimize(g, 0, cost);
                 break;
             case 4:
-                cost = Algorithms::TSPbyEdgeOrdering(g);
-                Menu::printInfoPathByEdges(g, cost);
+                cost = Algorithms::TSPGreedy(g);
+                Menu::printInfoPath(g, 0, cost);
                 Menu::askOptimize(g, 0, cost);
                 break;
             case 5:
@@ -47,11 +47,18 @@ int main() {
                 break;
             case 6:
                 {   double dCost=0;
-                    bool success=Algorithms::TSPrealWorld(g,0,dCost);
+                    bool success= Algorithms::TSPrealWorld1(g, 0, dCost);
                     std::cout<<(success?"Success!\n":"Failure!\n");
                     Menu::printInfoPath(g, 0,dCost);
                     Menu::askOptimize(g, 0, dCost);
                 }
+            case 7:
+            {   double dCost=0;
+                bool success=Algorithms::TSPrealWorld2(g,0,dCost);
+                std::cout<<(success?"Success!\n":"Failure!\n");
+                Menu::printInfoPath(g, 0,dCost);
+                Menu::askOptimize(g, 0, dCost);
+            }
             default:
                 c = false;
                 break;

@@ -8,7 +8,7 @@
 // Implementation inspired on the last project "Water Management" by Filipe Correia, Gabriela Silva and Gonçalo Nunes.
 
 std::vector<std::string> Menu::getOptions(){
-    return {"Exit Program", "Repeat Instructions", "Backtracking Algorithm (It yields the optimal solution but is infeasible for big instances)", "Triangle Approximation Algorithm", "3º Algoritmo", "4º Algoritmo", "5+ Algoritmo"};
+    return {"Exit Program", "Repeat Instructions", "Backtracking Algorithm (It yields the optimal solution but is infeasible for big instances)", "Triangle Approximation Algorithm", "3º Algoritmo", "4º Algoritmo", "5º Algoritmo", "Algorithmo com Dijkstra"};
 }
 
 void Menu::print(std::string t){
@@ -67,6 +67,7 @@ void Menu::printInfoPath(Graph* g, int v0, float cost) {
         std::cout << " ->(" << g->getDistance(v->getId(), v->getNextVertex()) << ")";
         std::cout << "-> " << v->getNextVertex();
         v = g->getVertex(v->getNextVertex());
+        if(v== nullptr){break;}
         if (v->getId() == v0) break;
     }
 

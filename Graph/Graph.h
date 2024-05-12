@@ -39,10 +39,14 @@ protected:
     //-1 for invalid...
     int nextVertex=-1; // contains the next vertex in the path
 
+    Vertex* prev= nullptr;
+    double distanceFromSource=0;
 public:
     Vertex(int id, float lat, float lon) : id(id), latitude(lat), longitude(lon){};
     Vertex(int id) : id(id) {};
     int getId() const{return id;}
+    double getDistanceFromSource()const {return distanceFromSource;}
+    void setDistanceFromSource(double newDistance) {distanceFromSource=newDistance;}
     float getLat(){return latitude;}
     float getLon(){return longitude;}
     bool isVisited(){return visited;}
@@ -51,6 +55,8 @@ public:
     void setProcessing(bool p){processing = p;}
     int getNextVertex(){return nextVertex;}
     void setNextVertex(int nextVertex){this->nextVertex = nextVertex;}
+    Vertex* getPrevVertex(){return prev;}
+    void setPrevVertex(Vertex* prevVertex){this->prev = prevVertex;}
     friend class Graph;
 };
 
@@ -74,6 +80,9 @@ public:
         edgeUsed = new std::vector<bool>((noVertexes * (noVertexes - 1))/ 2); // to store the edges that were used.
         for(int i = 0; i < noVertexes; i++){
             (*data)[i] = new std::vector<float>(noVertexes - 1 - i);
+        }
+        for(int i = 0; i < noVertexes; i++){
+            (*edgeUsed)[i] = false;
         }
         this->noVertexes = noVertexes;
         visited = new std::vector<unsigned char>(noVertexes, false);
