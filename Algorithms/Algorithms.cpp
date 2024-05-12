@@ -222,6 +222,7 @@ bool Algorithms::TSPrealWorld(Graph* g, int startVertex, double &resultLength)
 #ifdef VERY_STUPID_TEST_HEURISTIC
 return TSPrealWorldRec(g,vert, 0,startVertex,resultLength);
 #endif
+   return false;
 }
 
 
