@@ -32,7 +32,7 @@ int main() {
                 Menu::printInfoPath(g, 0, cost);
                 break;
             case 3:
-                cost = Algorithms::TSPwithTriangleApproximation(g, 0);
+                cost = Algorithms::TSPwithTriangleApproximation2(g, 0);
                 Menu::printInfoPath(g, 0, cost);
                 Menu::askOptimize(g, 0, cost);
                 break;

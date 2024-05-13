@@ -164,6 +164,10 @@ public:
         return vertexSet;
     }
 
+    std::vector<Vertex*> getVertexSetCopy() const{
+        return vertexSet;
+    }
+
     bool isEdgeInGraph(int s, int e){
         if(s >= noVertexes || e >= noVertexes || s < 0 || e < 0){
             return false;

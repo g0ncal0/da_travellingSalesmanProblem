@@ -53,6 +53,7 @@ public:
     static float twoOpt(Graph* g, int v0, float cost);
 
     static void anotherMST(Graph* g, int v0);
+    static double TSPwithTriangleApproximation2(Graph* g, int startVertex);
 };
 
 

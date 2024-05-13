@@ -282,8 +282,16 @@ bool Algorithms::TSPrealWorld2(Graph *g, int startVertex, double &resultLength)
         }
     }
 
-    //now I need to invert this, somehow...
-    for(auto vert: g->getVertexSet())
+    auto vertices =g->getVertexSetCopy();
+//#define MY_STUPID_ATTEMPT_AT_SALVAGING_THIS_ALGORITHM
+//#ifdef MY_STUPID_ATTEMPT_AT_SALVAGING_THIS_ALGORITHM
+    std::sort(vertices.begin(), vertices.end(), [](Vertex* l,Vertex* r){
+        return l->getDistanceFromSource()<r->getDistanceFromSource();
+    });
+//#endif
+
+
+    for(auto vert: vertices)
     {
         auto prev=vert->getPrevVertex();
 
@@ -326,7 +334,6 @@ bool Algorithms::TSPrealWorld2(Graph *g, int startVertex, double &resultLength)
         if (v->getId() == startVertex) {break;}
     }
 
-    //this does just a dijkstra's for now...
     return true;
 }
 
@@ -542,4 +549,51 @@ void Algorithms::anotherMST(Graph* g, int v0) {
         }
         else break;
     }
+}
+
+
+double auxTriangleApproximationDFS2(Graph *g, Vertex *vert,Vertex *&currentLast) {
+
+    vert->setVisited(true);
+    currentLast->setNextVertex(vert->getId());
+    float sum=g->getDistance(currentLast->getId(),vert->getId());
+    currentLast=vert;
+
+//for all mst edges, if destination not visited, destination.visit()
+    for (Vertex *i: g->getVertexSet()) {
+        if (!i->isVisited()&&g->isEdgeInGraph(vert->getId(),i->getId())) {
+            sum+= auxTriangleApproximationDFS2(g,i, currentLast);
+        }
+    }
+    return sum;
+}
+
+
+double Algorithms::TSPwithTriangleApproximation2(Graph* g, int startVertex)
+{
+
+
+    Vertex *vert = g->getVertex(startVertex);
+    if (!vert) {
+        return -1;
+    }
+
+
+    for (auto vertex: g->getVertexSet()) {
+        vertex->setVisited(false);
+    }
+    Algorithms::anotherMST(g, startVertex);
+
+
+    for (auto vertex: g->getVertexSet()) {
+        vertex->setVisited(false);
+    }
+
+    Vertex *currentLast = vert;
+    double sum=auxTriangleApproximationDFS2(g, vert, currentLast);
+
+    currentLast->setNextVertex(startVertex);
+    sum+=g->getDistance(currentLast->getId(),vert->getId());
+
+    return sum;
 }
