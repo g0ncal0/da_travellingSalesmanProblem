@@ -319,22 +319,21 @@ bool Algorithms::TSPrealWorld2(Graph *g, int startVertex, double &resultLength)
 
     Vertex* v = source;
     resultLength=0;
+    bool res=true;
     while (true) {
         if (v->getNextVertex()==-1)
         {
             v->setNextVertex(startVertex);
 
         }
-        if (g->isEdgeInGraph(v->getId(),v->getNextVertex()))
-        {
-            resultLength+=g->getDistance(v->getId(),v->getNextVertex());
-        } else
-        { return false;}
+        res = res && (g->isEdgeInGraph(v->getId(),v->getNextVertex()));
+
+        resultLength+=g->getDistance(v->getId(),v->getNextVertex());
         v = g->getVertex(v->getNextVertex());
         if (v->getId() == startVertex) {break;}
     }
 
-    return true;
+    return res;
 }
 
 
@@ -411,9 +410,12 @@ float Algorithms::TSPChristofides(Graph* g) {
 
     //second mst algorithm
     anotherMST(g, 0);
+
+    return 0.0;
+
     for (int i = 0; i < g->getNoVertexes(); i++) {
         for (int j = i + 1; j < g->getNoVertexes(); j++) {
-            if (g->getEdgeUsed(i, j)) {
+            if (g->getEdgeUsedInMST(i, j)) {
                 std::cout << g->getVertex(i)->getId() << " -> " << g->getVertex(j)->getId() << std::endl;
             }
         }
@@ -518,11 +520,37 @@ bool isValidEdge(int u, int v, Graph* g) {
 void Algorithms::anotherMST(Graph* g, int v0) {
     //estou a assumir que o vetor que armazena se a edge existe começa com tudo a falso para eu usar esse valor para dizer se a edge está ou não na MST, talvez seja preciso inicializar isso à mão depois
 
+    auto* edges = new std::vector<std::pair<std::pair<int, int>, float>>((g->getNoVertexes() * (g->getNoVertexes() - 1)) / 2);
+    auto it = edges->begin();
+
+    for (int i = 0; i < g->getNoVertexes(); i++) {
+        for (int j = i + 1; j < g->getNoVertexes(); j++) {
+            (*it) = {{i,j}, g->getDistance(i, j)};
+            it++;
+        }
+    }
+
+    std::sort(edges->begin(), edges->end(), [](const std::pair<std::pair<int, int>, float>& a, const std::pair<std::pair<int, int>, float>& b) {
+        return a.second < b.second;
+    });
+
+    /*for (auto e : (*edges)) {
+        std::cout << e.first.first << "->" << e.first.second << "    " << e.second << std::endl;
+    }*/
+
+    std::cout << "Done" << std::endl;
+
+    free(edges);
+
+    return;
+
     g->getVertex(v0)->setVisited(true);
     int sizeMST = 1;
     int sizeGraph = g->getNoVertexes();
     float distance;
     int a, b;
+    Vertex* v1;
+    Vertex* v2;
 
     while (sizeMST < sizeGraph) {
         float min = std::numeric_limits<float>::max();
@@ -543,9 +571,16 @@ void Algorithms::anotherMST(Graph* g, int v0) {
 
         if (a != -1 && b != -1) {
             sizeMST++;
-            g->getVertex(a)->setVisited(true);
-            g->getVertex(b)->setVisited(true);
-            g->setEdgeUsed(a, b, true);
+
+            v1 = g->getVertex(a);
+            v2 = g->getVertex(b);
+
+            v1->setVisited(true);
+            v1->incrementDegree();
+            v2->setVisited(true);
+            v2->incrementDegree();
+
+            g->setEdgeUsedInMST(a, b, true);
         }
         else break;
     }
@@ -561,7 +596,7 @@ double auxTriangleApproximationDFS2(Graph *g, Vertex *vert,Vertex *&currentLast)
 
 //for all mst edges, if destination not visited, destination.visit()
     for (Vertex *i: g->getVertexSet()) {
-        if (!i->isVisited()&&g->isEdgeInGraph(vert->getId(),i->getId())) {
+        if (i!=vert&& !i->isVisited()&&g->getEdgeUsedInMST(vert->getId(),i->getId())) {
             sum+= auxTriangleApproximationDFS2(g,i, currentLast);
         }
     }
