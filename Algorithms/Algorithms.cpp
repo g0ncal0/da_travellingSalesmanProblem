@@ -334,16 +334,16 @@ float Algorithms::twoOpt(Graph *g, int v0, float cost) {
     return cost;
 }
 
-bool isValidEdge(int u, int v, Graph* g) {
+int getNewVertexes(int u, int v, Graph* g) {
     bool uInMST = g->getVertex(u)->isVisited();
     bool vInMST = g->getVertex(v)->isVisited();
 
     if (uInMST && vInMST)
-        return false;
+        return 0;
     if ((!uInMST) && (!vInMST))
-        return false;
+        return 2;
 
-    return true;
+    return 1;
 }
 
 void Algorithms::anotherMST(Graph* g, int v0) {
@@ -364,13 +364,42 @@ void Algorithms::anotherMST(Graph* g, int v0) {
     g->getVertex(v0)->setVisited(true);
     int sizeMST = 1;
     int sizeGraph = g->getNoVertexes();
-    float distance;
-    int a, b;
+    std::vector<edgeInfo> notUsedYet;
+    int newVertexes;
     Vertex* v1;
     Vertex* v2;
 
     for (auto itEdges = edges->begin(); itEdges != edges->end(); itEdges++) {
-        if (isValidEdge(itEdges->s, itEdges->e, g)) {
+
+        for (auto itNotUsedEdges = notUsedYet.begin(); itNotUsedEdges != notUsedYet.end(); itNotUsedEdges++) {
+            newVertexes = getNewVertexes(itNotUsedEdges->s, itNotUsedEdges->e, g);
+
+            if (newVertexes == 2) continue;
+
+            else if (newVertexes == 1) {
+                sizeMST++;
+
+                v1 = g->getVertex(itNotUsedEdges->s);
+                v2 = g->getVertex(itNotUsedEdges->e);
+
+                v1->setVisited(true);
+                v1->incrementDegree();
+                v2->setVisited(true);
+                v2->incrementDegree();
+
+                g->setEdgeUsedInMST(itNotUsedEdges->s, itNotUsedEdges->e, true);
+
+                if (sizeMST == sizeGraph) break;
+            }
+
+            itNotUsedEdges = notUsedYet.erase(itNotUsedEdges);
+            itNotUsedEdges--;
+        }
+
+        if (sizeMST == sizeGraph) break;
+
+        newVertexes = getNewVertexes(itEdges->s, itEdges->e, g);
+        if (newVertexes == 1) {
             sizeMST++;
 
             v1 = g->getVertex(itEdges->s);
@@ -384,6 +413,10 @@ void Algorithms::anotherMST(Graph* g, int v0) {
             g->setEdgeUsedInMST(itEdges->s, itEdges->e, true);
 
             if (sizeMST == sizeGraph) break;
+        }
+
+        else if (newVertexes == 2) {
+            notUsedYet.push_back(*itEdges);
         }
     }
 
