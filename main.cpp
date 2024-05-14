@@ -52,6 +52,7 @@ int main() {
                     Menu::printInfoPath(g, 0,dCost);
                     Menu::askOptimize(g, 0, dCost);
                 }
+                break;
             case 7:
             {   double dCost=0;
                 bool success=Algorithms::TSPrealWorld2(g,0,dCost);
@@ -59,6 +60,14 @@ int main() {
                 Menu::printInfoPath(g, 0,dCost);
                 Menu::askOptimize(g, 0, dCost);
             }
+                break;
+            case 8:
+            {
+                cost = Algorithms::HUBAlgorithm(g,0);
+                Menu::printInfoPath(g, 0,cost);
+                Menu::askOptimize(g, 0, cost);
+            }
+                break;
             default:
                 c = false;
                 break;

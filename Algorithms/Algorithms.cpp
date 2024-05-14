@@ -411,8 +411,6 @@ float Algorithms::TSPChristofides(Graph* g) {
     //second mst algorithm
     anotherMST(g, 0);
 
-    return 0.0;
-
     for (int i = 0; i < g->getNoVertexes(); i++) {
         for (int j = i + 1; j < g->getNoVertexes(); j++) {
             if (g->getEdgeUsedInMST(i, j)) {
@@ -518,31 +516,19 @@ bool isValidEdge(int u, int v, Graph* g) {
 }
 
 void Algorithms::anotherMST(Graph* g, int v0) {
-    //estou a assumir que o vetor que armazena se a edge existe começa com tudo a falso para eu usar esse valor para dizer se a edge está ou não na MST, talvez seja preciso inicializar isso à mão depois
-
-    auto* edges = new std::vector<std::pair<std::pair<int, int>, float>>((g->getNoVertexes() * (g->getNoVertexes() - 1)) / 2);
+    auto* edges = new std::vector<edgeInfo>((g->getNoVertexes() * (g->getNoVertexes() - 1)) / 2);
     auto it = edges->begin();
 
     for (int i = 0; i < g->getNoVertexes(); i++) {
         for (int j = i + 1; j < g->getNoVertexes(); j++) {
-            (*it) = {{i,j}, g->getDistance(i, j)};
+            (*it) = {i,j, g->getDistance(i, j)};
             it++;
         }
     }
 
-    std::sort(edges->begin(), edges->end(), [](const std::pair<std::pair<int, int>, float>& a, const std::pair<std::pair<int, int>, float>& b) {
-        return a.second < b.second;
+    std::sort(edges->begin(), edges->end(), [](const edgeInfo& a, const edgeInfo& b) {
+        return a.distance < b.distance;
     });
-
-    /*for (auto e : (*edges)) {
-        std::cout << e.first.first << "->" << e.first.second << "    " << e.second << std::endl;
-    }*/
-
-    std::cout << "Done" << std::endl;
-
-    free(edges);
-
-    return;
 
     g->getVertex(v0)->setVisited(true);
     int sizeMST = 1;
@@ -552,39 +538,26 @@ void Algorithms::anotherMST(Graph* g, int v0) {
     Vertex* v1;
     Vertex* v2;
 
-    while (sizeMST < sizeGraph) {
-        float min = std::numeric_limits<float>::max();
-        a = b = -1;
-
-        for (int i = 0; i < sizeGraph; i++) {
-            for (int j = i + 1; j < sizeGraph; j++) {
-                distance = g->getDistance(i, j);
-                if (distance < min) {
-                    if (isValidEdge(i, j, g)) {
-                        min = distance;
-                        a = i;
-                        b = j;
-                    }
-                }
-            }
-        }
-
-        if (a != -1 && b != -1) {
+    for (auto itEdges = edges->begin(); itEdges != edges->end(); itEdges++) {
+        if (isValidEdge(itEdges->s, itEdges->e, g)) {
             sizeMST++;
 
-            v1 = g->getVertex(a);
-            v2 = g->getVertex(b);
+            v1 = g->getVertex(itEdges->s);
+            v2 = g->getVertex(itEdges->e);
 
             v1->setVisited(true);
             v1->incrementDegree();
             v2->setVisited(true);
             v2->incrementDegree();
 
-            g->setEdgeUsedInMST(a, b, true);
+            g->setEdgeUsedInMST(itEdges->s, itEdges->e, true);
+
+            if (sizeMST == sizeGraph) break;
         }
-        else break;
     }
+    free(edges);
 }
+
 
 
 double auxTriangleApproximationDFS2(Graph *g, Vertex *vert,Vertex *&currentLast) {
@@ -632,3 +605,73 @@ double Algorithms::TSPwithTriangleApproximation2(Graph* g, int startVertex)
 
     return sum;
 }
+
+
+double Algorithms::HUBAlgorithm(Graph* g, int v0){
+    std::set<Vertex*> hub;
+    auto source=g->getVertex(v0);
+    source->setNextVertex(0);
+    hub.emplace(source);
+
+    while(hub.size()<g->getNoVertexes())
+    {
+        Vertex* firstV=0;
+        for(Vertex* vert:g->getVertexSet())
+        {
+            {
+                if (hub.find(vert)==hub.end())
+                {
+                    firstV=vert;
+                    break;
+                }
+            }
+
+        }
+        if(!firstV)
+        {
+            break;
+        }
+
+
+        int min_before=-1;
+        int min_next=-1;
+        double lengthAdded=std::numeric_limits<double>::max();
+        for (Vertex* vert:hub) {
+            if(g->isEdgeInGraph(vert->getId(),firstV->getId())&&g->isEdgeInGraph(firstV->getId(),vert->getNextVertex())){
+                auto newLength=g->getDistance(vert->getId(),firstV->getId())+g->getDistance(firstV->getId(),vert->getNextVertex());
+                if (newLength<lengthAdded)
+                {
+                    lengthAdded=newLength;
+                    min_before=vert->getId();
+                    min_next=vert->getNextVertex();
+                }
+            }
+        }
+
+        if (min_before==-1)
+        {
+            break;
+        }
+
+        firstV->setNextVertex(min_next);
+        g->getVertex(min_before)->setNextVertex(firstV->getId());
+        hub.emplace(firstV);
+
+    }
+
+
+    Vertex* v = source;
+    double resultLength=0;
+    bool res=true;
+    while (true) {
+        res = res && (g->isEdgeInGraph(v->getId(),v->getNextVertex()));
+        resultLength+=g->getDistance(v->getId(),v->getNextVertex());
+        v = g->getVertex(v->getNextVertex());
+        if (v->getId() == v0) {break;}
+    }
+
+    return res*resultLength;
+
+}
+
+

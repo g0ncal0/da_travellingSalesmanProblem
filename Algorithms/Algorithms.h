@@ -54,6 +54,8 @@ public:
 
     static void anotherMST(Graph* g, int v0);
     static double TSPwithTriangleApproximation2(Graph* g, int startVertex);
+
+    static double HUBAlgorithm(Graph* g, int v0);
 };
 
 
