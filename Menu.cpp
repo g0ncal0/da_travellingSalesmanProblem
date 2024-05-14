@@ -8,7 +8,7 @@
 // Implementation inspired on the last project "Water Management" by Filipe Correia, Gabriela Silva and Gonçalo Nunes.
 
 std::vector<std::string> Menu::getOptions(){
-    return {"Exit Program", "Repeat Instructions", "Backtracking Algorithm (It yields the optimal solution but is infeasible for big instances)", "Triangle Approximation Algorithm", "3º Algoritmo", "4º Algoritmo"};
+    return {"Exit Program", "Repeat Instructions", "Backtracking Algorithm (It yields the optimal solution but is infeasible for big instances)", "Triangle Approximation Algorithm", "3º Algoritmo", "4º Algoritmo", "RUN STATS"};
 }
 
 void Menu::print(std::string t){
@@ -57,9 +57,15 @@ std::string Menu::getInput(std::string text){
 }
 
 void Menu::printInfoPath(Graph* g, int v0, float cost) {
+    if(cost == -1){return;}
     std::cout << "O custo minimo é: " << cost << std::endl;
 
     Vertex* v = g->getVertex(v0);
+
+    int ctn = getNumber("Do you want to see the path? (insert 0 to no)");
+    if(!ctn){
+        return;
+    }
 
     std::cout << "Entre parênteses está o custo do segmento respetivo." << std::endl;
     std::cout << "O caminho é 0";
@@ -73,9 +79,7 @@ void Menu::printInfoPath(Graph* g, int v0, float cost) {
     std::cout << std::endl << std::endl;
 }
 
-void Menu::printInfoPathByEdges(Graph* g, float cost){
-    std::cout << "O custo minimo é: " << cost << std::endl;
-}
+
 
 void Menu::askOptimize(Graph* g, int v0, float cost) {
     char answer;

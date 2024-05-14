@@ -11,4 +11,6 @@ add_executable(DAProject2 main.cpp
         Parser.h
         Parser.cpp
         Menu.cpp
-        Menu.h)
+        Menu.h
+        Statistics.cpp
+        Statistics.h)

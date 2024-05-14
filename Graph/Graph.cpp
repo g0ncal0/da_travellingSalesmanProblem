@@ -7,7 +7,7 @@
 
 
 
-float calculateDistance(int latA, int lonA, int latB, int lonB){
+float calculateDistance(float latA, float lonA, float latB, float lonB){
     double dLat = (latB - latA) * M_PI / 180.0;
     double dLon = (lonB - lonA) * M_PI / 180.0;
 

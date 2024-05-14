@@ -12,7 +12,7 @@
 #include <algorithm>
 
 
-float calculateDistance(int latA, int lonA, int latB, int lonB);
+float calculateDistance(float latA, float lonA, float latB, float lonB);
 int getposition(int noVertexes, int a, int b);
 
 
@@ -34,7 +34,6 @@ protected:
     bool processing = false;
     float latitude;
     float longitude;
-    std::vector<int> adjVertex;
 
     //-1 for invalid...
     int nextVertex=-1; // contains the next vertex in the path
@@ -82,7 +81,14 @@ public:
         visited = new std::vector<unsigned char>(noVertexes, false);
 
     }
-
+    ~Graph(){
+        for(auto e : *data){
+            delete [] e;
+        }
+        delete [] data;
+        delete [] visited;
+        delete [] edgeUsed;
+    }
 
     int getNoVertexes(){
         return noVertexes;

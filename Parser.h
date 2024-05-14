@@ -8,6 +8,7 @@ class Parser {
         static Graph* parse();
         static Graph* parseToy();
         static Graph* parseExtraFullyConnected();
+        static Graph* parseExtraFullyConnectedWithId(int id);
         static Graph* parseRealWorld();
 };
 

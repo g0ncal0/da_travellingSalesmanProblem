@@ -187,12 +187,16 @@ float Algorithms::TSPGreedy(Graph* g){
         int indexNext = -1;
         for(int j = 0; j < g->getNoVertexes(); j++){
             if(current->getId() != j && !g->getVisited(j)){ // is not the same vertex and is not visited yet
-                int cmin = g->getDistance(current->getId(),j); // get the distance between i and other vertexes to find min.
-                if(cmin < min){
+                float cmin = g->getDistance(current->getId(),j); // get the distance between i and other vertexes to find min.
+                if(g->isEdgeInGraph(current->getId(), j) && cmin < min){ // checks if the edge is in graph and if can be considered
                     min = cmin;
                     indexNext = j; // the index of the element that will follow current
                 }
             }
+        }
+        if(indexNext == -1){
+            std::cout << "Infeasable TSP";
+            return -1;
         }
         sum += min;
         current->setNextVertex(indexNext);

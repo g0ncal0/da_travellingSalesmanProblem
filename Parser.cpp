@@ -89,14 +89,21 @@ Graph* Parser::parseToy() {
     return graph;
 }
 
+
+
 Graph* Parser::parseExtraFullyConnected() {
     int answer;
     string filename = "../Data/Extra_Fully_Connected_Graphs/";
-    int nVertex;
 
     cout << "\nHow many nodes do you want in the graph?\n1. 25\n2. 50\n3. 75\n4. 100\n5. 200\n6. 300\n7. 400\n8. 500\n9. 600\n10. 700\n11. 800\n12. 900\nYour answer: ";
     cin >> answer;
+    return parseExtraFullyConnectedWithId(answer);
+}
 
+Graph* Parser::parseExtraFullyConnectedWithId(int answer){
+
+    string filename = "../Data/Extra_Fully_Connected_Graphs/";
+    int nVertex;
     if (answer == 2) {
         filename += "edges_50.csv";
         nVertex = 50;
@@ -190,6 +197,7 @@ Graph* Parser::parseExtraFullyConnected() {
 
     return graph;
 }
+
 
 Graph* Parser::parseRealWorld() {
     int answer;
