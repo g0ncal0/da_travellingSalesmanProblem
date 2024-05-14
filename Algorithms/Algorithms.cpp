@@ -640,7 +640,8 @@ double Algorithms::TSPwithTriangleApproximation2(Graph* g, int startVertex)
 }
 
 
-double Algorithms::HUBAlgorithm(Graph* g, int v0){
+bool Algorithms::HUBAlgorithm(Graph* g, int v0,double &resultLength){
+    resultLength=0;
     std::set<Vertex*> hub;
     auto source=g->getVertex(v0);
     source->setNextVertex(0);
@@ -685,7 +686,7 @@ double Algorithms::HUBAlgorithm(Graph* g, int v0){
         {
             break;
         }
-
+        resultLength+=lengthAdded-g->getDistance(min_before,min_next);
         firstV->setNextVertex(min_next);
         g->getVertex(min_before)->setNextVertex(firstV->getId());
         hub.emplace(firstV);
@@ -693,18 +694,9 @@ double Algorithms::HUBAlgorithm(Graph* g, int v0){
     }
 
 
-    Vertex* v = source;
-    double resultLength=0;
-    bool res=true;
-    while (true) {
-        res = res && (g->isEdgeInGraph(v->getId(),v->getNextVertex()));
-        resultLength+=g->getDistance(v->getId(),v->getNextVertex());
-        v = g->getVertex(v->getNextVertex());
-        if (v->getId() == v0) {break;}
-    }
 
-    return res*resultLength;
 
+    return hub.size()==g->getNoVertexes();
 }
 
 

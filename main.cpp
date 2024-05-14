@@ -63,9 +63,11 @@ int main() {
                 break;
             case 8:
             {
-                cost = Algorithms::HUBAlgorithm(g,0);
-                Menu::printInfoPath(g, 0,cost);
-                Menu::askOptimize(g, 0, cost);
+                double dCost=0;
+                bool success= Algorithms::HUBAlgorithm(g,0,dCost);
+                std::cout<<(success?"Success!\n":"Failure!\n");
+                Menu::printInfoPath(g, 0,dCost);
+                Menu::askOptimize(g, 0, dCost);
             }
                 break;
             default:
