@@ -9,7 +9,17 @@
 #include <set>
 #include <unordered_map>
 class Algorithms {
+    /**
+     * The recursive function of Backtracking Algorithm that actually does almost all the work
+     * Complexity: O(V!)
+     * @param g the graph
+     * @param id of the vertex that we are analysing
+     * @param costToBeat the maximum cost for this branch, if actual cost becomes bigger than this number the function will return false and cut this branch
+     * @param numberVisited -> number of already visited vertexes, if we already visited all the vertexes the function will return true
+     * @return true if there is a possible solution in this branch
+     */
     static bool auxTSPwithBacktracking(Graph* g, int id, float& costToBeat, int numberVisited);
+
     /**
      * A recursive depth-first search used by the triangular approximation algorithm to construct the final path.\n
      * Complexity: O(V + E)
@@ -20,6 +30,7 @@ class Algorithms {
      * @return The length of the path, excluding the final edge to the starting vertex
      */
     static float auxTriangleApproximationDFS(Graph *g,Vertex* vert, std::unordered_map<Vertex*,std::vector<Vertex*>>& edges,Vertex*& currentLast);
+
     /**
      * An implementation of Kruskal's algorithm, used to construct a minimum spanning tree for the triangular approximation algorithm.\n
      * Complexity: O(V + E)
@@ -30,7 +41,12 @@ class Algorithms {
     static void auxMST(Graph* g,Vertex* startVertex,std::unordered_map<Vertex*,std::vector<Vertex*>>& edges);
 public:
 
-
+    /**
+     * An backtracking algorithm for the TSP. It gets an optimal solution but it's infeasible for medium and big graphs
+     * Complexity: O(V!)
+     * @param g the graph
+     * @return the minimum cost of the TSP or -1 if it is impossible
+     */
     static float TSPwithBacktracking(Graph* g);
 
     /**
@@ -68,6 +84,14 @@ public:
 
     static float TSPChristofides(Graph* g);
 
+    /**
+     * An optimization algorithm 2-opt that works by changing pairs of vertexes to get a better solution
+     * Complexity: O(E)
+     * @param g the graph
+     * @param v0 first vertex
+     * @param cost the initial cost found
+     * @return a better cost or initial cost if no upgrade was found
+     */
     static float twoOpt(Graph* g, int v0, float cost);
 
     static void anotherMST(Graph* g, int v0, std::vector<edgeInfo>* edges);
