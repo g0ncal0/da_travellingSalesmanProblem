@@ -243,6 +243,9 @@ std::vector<int> eulerTour(Graph* g, std::vector<edgeInfo> edges) {
     bool goBackwards = false;
     int goTo;
 
+    float minDistance;
+    int next;
+
     while (nEdges > 0) {
         end = true;
         goBackwards = false;
@@ -323,12 +326,26 @@ std::vector<int> eulerTour(Graph* g, std::vector<edgeInfo> edges) {
         }
 
         if (end) {
+            next = -1;
 
             for (int i = 0; i < g->getNoVertexes(); i++) {
+                minDistance = std::numeric_limits<float>::max();
 
+                if (g->getVertex(i)->getDegree() == 0 || i == vertex->getId()) continue;
+
+                if (g->getDistance(vertex->getId(), i) < minDistance) {
+                    next = i;
+                    minDistance = g->getDistance(vertex->getId(), i) < minDistance;
+                }
             }
-            std::cout << "NEDGES - " << nEdges << std::endl;
-            break;
+
+            if (next == -1) break;
+
+            nEdges--;
+            vertex->decrementDegree();
+            tour.push_back(next);
+            vertex = g->getVertex(next);
+            vertex->decrementDegree();
         }
     }
 
@@ -363,11 +380,34 @@ float Algorithms::TSPChristofides(Graph* g) {
     }
 
     std::vector<int> tour = eulerTour(g, *edges);
+    if (tour.back() != 0) tour.push_back(0);
 
     for (int i : tour) std::cout << i << " -> ";
     std::cout << std::endl;
 
-    return 0.0;
+    auto* newTour = new std::vector<int>(g->getNoVertexes() + 1);
+    (*newTour)[0] = 0;
+    (*newTour)[g->getNoVertexes()] = 0;
+    g->getVertex(0)->setVisited(true);
+
+    int index = 1;
+    for (int v : tour) {
+        if (!g->getVertex(v)->isVisited()) {
+            (*newTour)[index] = v;
+            g->getVertex(v)->setVisited(true);
+            index++;
+        }
+    }
+
+    float cost = 0;
+    for (int i = 0; i < g->getNoVertexes(); i++) {
+        cost += g->getDistance((*newTour)[i], (*newTour)[i + 1]);
+    }
+
+    for (int i : *newTour) std::cout << i << " -> ";
+    std::cout << std::endl;
+
+    return cost;
 }
 
 void swap(std::vector<int>& path, int a, int b) {

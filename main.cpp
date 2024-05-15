@@ -43,7 +43,7 @@ int main() {
                 break;
             case 5:
                 cost = Algorithms::TSPChristofides(g);
-
+                std::cout << "Cost -> " << cost << std::endl;
                 break;
             default:
                 c = false;
