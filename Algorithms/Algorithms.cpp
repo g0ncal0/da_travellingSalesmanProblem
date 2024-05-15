@@ -206,17 +206,105 @@ float Algorithms::TSPGreedy(Graph* g){
     return sum;
 }
 
+bool isValidMatch(edgeInfo edge, Graph* g) {
+    return (((g->getVertex(edge.s)->getDegree() % 2) == 1) && ((g->getVertex(edge.e)->getDegree() % 2) == 1));
+}
 
+void perfectMatching(Graph* g, std::vector<edgeInfo>* edges) {
+    for (const edgeInfo& edge : (*edges)) {
+        if (isValidMatch(edge, g)) {
+            g->getVertex(edge.s)->incrementDegree();
+            g->getVertex(edge.e)->incrementDegree();
 
+            //meter a edge na tree ou duplicá-la caso já lá esteja
+            if (!g->getEdgeUsedInMST(edge.s, edge.e)) {
+                g->setEdgeUsedInMST(edge.s, edge.e, true);
+            }
+            else {
+                g->setDuplicateEdge(edge.s, edge.e, true);
+            }
+        }
+    }
+}
 
-std::vector<Vertex*> getOddVertexesInTree(const std::unordered_map<Vertex *, std::vector<Vertex * >>& edges) {
-    std::vector<Vertex*> oddVertexes;
-
-    for (const auto& pair: edges) {
-        if (pair.second.size() % 2) oddVertexes.push_back(pair.first);
+std::vector<int> eulerTour(Graph* g, std::vector<edgeInfo> edges) {
+    int nEdges = 0;
+    for (int i = 0; i < g->getNoVertexes(); i++) {
+        nEdges += g->getVertex(i)->getDegree();
     }
 
-    return oddVertexes;
+    nEdges /= 2;
+
+    std::vector<int> tour;
+    tour.push_back(0);
+
+    Vertex* vertex = g->getVertex(0);
+    bool end = true;
+
+    while (nEdges > 0) {
+        end = true;
+
+        for (auto & edge : edges) {
+            if (edge.s == vertex->getId()) {
+                if ((edge.e == 0) && (g->getVertex(0)->getDegree() == 1) && (nEdges > 1)) {
+                    continue;
+                }
+                else if (g->isDuplicateEdge(vertex->getId(), edge.e)) {
+                    g->setDuplicateEdge(vertex->getId(), edge.e, false);
+                }
+                else if (g->getEdgeUsedInMST(vertex->getId(), edge.e)){
+                    g->setEdgeUsedInMST(vertex->getId(), edge.e, false);
+                }
+                else continue;
+
+                nEdges--;
+
+                vertex->decrementDegree();
+                g->getVertex(edge.e)->decrementDegree();
+
+                tour.push_back(edge.e);
+
+                vertex = g->getVertex(edge.e);
+
+                end = false;
+                break;
+            }
+
+            else if (edge.e == vertex->getId()) {
+                if ((edge.s == 0) && (g->getVertex(0)->getDegree() == 1) && (nEdges > 1)) {
+                    if (edge.e == 22) {
+                        std::cout << "HELLLLOOOO" << std::endl;
+                        std::cout << "nEdges = " << nEdges << std::endl;
+                        std::cout << "degree = " << (g->getVertex(0)->getDegree() == 1) << std::endl;
+                    }
+                    continue;
+                }
+                if (g->isDuplicateEdge(vertex->getId(), edge.s)) {
+                    g->setDuplicateEdge(vertex->getId(), edge.s, false);
+                }
+                else if (g->getEdgeUsedInMST(vertex->getId(), edge.s)){
+                    g->setEdgeUsedInMST(vertex->getId(), edge.s, false);
+                }
+                else continue;
+
+                nEdges--;
+
+                vertex->decrementDegree();
+                g->getVertex(edge.s)->decrementDegree();
+
+                tour.push_back(edge.s);
+
+                vertex = g->getVertex(edge.s);
+
+                end = false;
+                break;
+            }
+        }
+
+        if (end) break;
+    }
+
+    return tour;
 }
 
 float Algorithms::TSPChristofides(Graph* g) {
@@ -229,18 +317,8 @@ float Algorithms::TSPChristofides(Graph* g) {
         vertex->setVisited(false);
     }
 
-    //first mst algorithm
-    /*std::unordered_map<Vertex *, std::vector<Vertex * >> edges;
-    auxMST(g, vert, edges);
-
-    for (auto& p : edges) {
-        for (auto& v : p.second) {
-            std::cout << p.first->getId() << " -> " << v->getId() << std::endl;
-        }
-    }*/
-
-    //second mst algorithm
-    anotherMST(g, 0);
+    auto* edges = new std::vector<edgeInfo>((g->getNoVertexes() * (g->getNoVertexes() - 1)) / 2);
+    anotherMST(g, 0, edges);
 
     for (int i = 0; i < g->getNoVertexes(); i++) {
         for (int j = i + 1; j < g->getNoVertexes(); j++) {
@@ -250,13 +328,13 @@ float Algorithms::TSPChristofides(Graph* g) {
         }
     }
 
-    /*for (auto vertex: g->getVertexSet()) {
+    for (auto vertex: g->getVertexSet()) {
         vertex->setVisited(false);
     }
 
-    std::vector<Vertex*> oddVertexes = getOddVertexesInTree(edges);*/
+    perfectMatching(g, edges);
 
-
+    std::vector<int> tour = eulerTour(g, *edges);
 
     return 0.0;
 }
@@ -346,8 +424,7 @@ int getNewVertexes(int u, int v, Graph* g) {
     return 1;
 }
 
-void Algorithms::anotherMST(Graph* g, int v0) {
-    auto* edges = new std::vector<edgeInfo>((g->getNoVertexes() * (g->getNoVertexes() - 1)) / 2);
+void Algorithms::anotherMST(Graph* g, int v0, std::vector<edgeInfo>* edges) {
     auto it = edges->begin();
 
     for (int i = 0; i < g->getNoVertexes(); i++) {
@@ -419,6 +496,4 @@ void Algorithms::anotherMST(Graph* g, int v0) {
             notUsedYet.push_back(*itEdges);
         }
     }
-
-    free(edges);
 }

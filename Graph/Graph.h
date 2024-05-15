@@ -55,6 +55,7 @@ public:
     int getDegree() const {return degree;}
     void setDegree(int degree) {this->degree = degree;}
     void incrementDegree() {degree++;}
+    void decrementDegree() {degree--;}
     friend class Graph;
 };
 
@@ -65,6 +66,7 @@ protected:
     int noVertexes;
     std::vector<unsigned char>* visited; // 0: unvisited, 1: visited, 2+: for special algorithms
     std::vector<bool>* edgeUsedInMST;
+    std::vector<bool>* duplicatedEdge;
 
 
 private:
@@ -76,6 +78,7 @@ public:
     Graph(int noVertexes){
         data = new std::vector<std::vector<float>*>(noVertexes - 1);
         edgeUsedInMST = new std::vector<bool>((noVertexes * (noVertexes - 1))/ 2); // to store the edges that were used.
+        duplicatedEdge = new std::vector<bool>((noVertexes * (noVertexes - 1))/ 2);
         for(int i = 0; i < noVertexes; i++){
             (*data)[i] = new std::vector<float>(noVertexes - 1 - i);
         }
@@ -247,6 +250,20 @@ public:
 
     bool getEdgeUsedInMST(int start, int end){
         return (*edgeUsedInMST)[getposition(start, end)];
+    }
+
+    void setDuplicateEdge(int start, int end, bool used){
+        if(start >= noVertexes || end >= noVertexes || start < 0 || end < 0){
+            return;
+        }
+        if(start == end){
+            return;
+        }
+        (*duplicatedEdge)[getposition(start, end)] = used;
+    }
+
+    bool isDuplicateEdge(int start, int end){
+        return (*duplicatedEdge)[getposition(start, end)];
     }
 };
 
