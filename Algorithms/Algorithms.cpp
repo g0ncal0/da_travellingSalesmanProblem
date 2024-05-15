@@ -379,6 +379,10 @@ float Algorithms::TSPChristofides(Graph* g) {
         }
     }
 
+    for (int i = 0; i < g->getNoVertexes(); i++) {
+        std::cout << i << " = " << g->getVertex(i)->getDegree() << std::endl;
+    }
+
     std::vector<int> tour = eulerTour(g, *edges);
     if (tour.back() != 0) tour.push_back(0);
 
