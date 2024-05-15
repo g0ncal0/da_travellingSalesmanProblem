@@ -240,17 +240,25 @@ std::vector<int> eulerTour(Graph* g, std::vector<edgeInfo> edges) {
 
     Vertex* vertex = g->getVertex(0);
     bool end = true;
+    bool goBackwards = false;
+    int goTo;
 
     while (nEdges > 0) {
         end = true;
+        goBackwards = false;
 
         for (auto & edge : edges) {
             if (edge.s == vertex->getId()) {
                 if ((edge.e == 0) && (g->getVertex(0)->getDegree() == 1) && (nEdges > 1)) {
                     continue;
                 }
+                else if (g->isDuplicateEdge(vertex->getId(), edge.e) && g->getEdgeUsedInMST(vertex->getId(), edge.e)) {
+                    g->setEdgeUsedInMST(vertex->getId(), edge.e, false);
+                }
                 else if (g->isDuplicateEdge(vertex->getId(), edge.e)) {
-                    g->setDuplicateEdge(vertex->getId(), edge.e, false);
+                    goBackwards = true;
+                    goTo = edge.e;
+                    continue;
                 }
                 else if (g->getEdgeUsedInMST(vertex->getId(), edge.e)){
                     g->setEdgeUsedInMST(vertex->getId(), edge.e, false);
@@ -272,15 +280,15 @@ std::vector<int> eulerTour(Graph* g, std::vector<edgeInfo> edges) {
 
             else if (edge.e == vertex->getId()) {
                 if ((edge.s == 0) && (g->getVertex(0)->getDegree() == 1) && (nEdges > 1)) {
-                    if (edge.e == 22) {
-                        std::cout << "HELLLLOOOO" << std::endl;
-                        std::cout << "nEdges = " << nEdges << std::endl;
-                        std::cout << "degree = " << (g->getVertex(0)->getDegree() == 1) << std::endl;
-                    }
                     continue;
                 }
-                if (g->isDuplicateEdge(vertex->getId(), edge.s)) {
-                    g->setDuplicateEdge(vertex->getId(), edge.s, false);
+                else if (g->isDuplicateEdge(vertex->getId(), edge.s) && g->getEdgeUsedInMST(vertex->getId(), edge.s)) {
+                    g->setEdgeUsedInMST(vertex->getId(), edge.s, false);
+                }
+                else if (g->isDuplicateEdge(vertex->getId(), edge.s)) {
+                    goBackwards = true;
+                    goTo = edge.s;
+                    continue;
                 }
                 else if (g->getEdgeUsedInMST(vertex->getId(), edge.s)){
                     g->setEdgeUsedInMST(vertex->getId(), edge.s, false);
@@ -301,7 +309,27 @@ std::vector<int> eulerTour(Graph* g, std::vector<edgeInfo> edges) {
             }
         }
 
-        if (end) break;
+        if (goBackwards && end) {
+            nEdges--;
+
+            vertex->decrementDegree();
+            g->getVertex(goTo)->decrementDegree();
+
+            tour.push_back(goTo);
+
+            vertex = g->getVertex(goTo);
+
+            end = false;
+        }
+
+        if (end) {
+
+            for (int i = 0; i < g->getNoVertexes(); i++) {
+
+            }
+            std::cout << "NEDGES - " << nEdges << std::endl;
+            break;
+        }
     }
 
     return tour;
@@ -320,21 +348,24 @@ float Algorithms::TSPChristofides(Graph* g) {
     auto* edges = new std::vector<edgeInfo>((g->getNoVertexes() * (g->getNoVertexes() - 1)) / 2);
     anotherMST(g, 0, edges);
 
-    for (int i = 0; i < g->getNoVertexes(); i++) {
-        for (int j = i + 1; j < g->getNoVertexes(); j++) {
-            if (g->getEdgeUsedInMST(i, j)) {
-                std::cout << g->getVertex(i)->getId() << " -> " << g->getVertex(j)->getId() << std::endl;
-            }
-        }
-    }
-
     for (auto vertex: g->getVertexSet()) {
         vertex->setVisited(false);
     }
 
     perfectMatching(g, edges);
 
+    for (int i = 0; i < g->getNoVertexes(); i++) {
+        for (int j = i + 1; j < g->getNoVertexes(); j++) {
+            if (g->getEdgeUsedInMST(i, j)) {
+                std::cout << g->getVertex(i)->getId() << " -> " << g->getVertex(j)->getId() << "   Duplo - " << g->isDuplicateEdge(i, j) << std::endl;
+            }
+        }
+    }
+
     std::vector<int> tour = eulerTour(g, *edges);
+
+    for (int i : tour) std::cout << i << " -> ";
+    std::cout << std::endl;
 
     return 0.0;
 }
