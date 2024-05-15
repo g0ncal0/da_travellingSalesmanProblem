@@ -207,7 +207,7 @@ bool TSPrealWorld1Rec(Graph* g, Vertex* currentVertex, int depth, int startVerte
 
 }
 
-bool Algorithms::TSPrealWorld1(Graph* g, int startVertex, double &resultLength)
+bool Algorithms::TSPrealWorldDFS(Graph* g, int startVertex, double &resultLength)
 {
    resultLength=0;
    Vertex* vert=g->getVertex(startVertex);
@@ -222,7 +222,7 @@ return TSPrealWorld1Rec(g, vert, 0, startVertex, resultLength);
 
 #include <list>
 
-bool Algorithms::TSPrealWorld2(Graph *g, int startVertex, double &resultLength)
+bool Algorithms::TSPrealWorldDijkstra(Graph *g, int startVertex, double &resultLength)
 {
     const double MAX_DOUBLE=std::numeric_limits<double>::max();
     Vertex* source;

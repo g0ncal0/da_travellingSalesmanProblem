@@ -47,7 +47,7 @@ int main() {
                 break;
             case 6:
                 {   double dCost=0;
-                    bool success= Algorithms::TSPrealWorld1(g, 0, dCost);
+                    bool success= Algorithms::TSPrealWorldDFS(g, 0, dCost);
                     std::cout<<(success?"Success!\n":"Failure!\n");
                     Menu::printInfoPath(g, 0,dCost);
                     Menu::askOptimize(g, 0, dCost);
@@ -55,7 +55,7 @@ int main() {
                 break;
             case 7:
             {   double dCost=0;
-                bool success=Algorithms::TSPrealWorld2(g,0,dCost);
+                bool success= Algorithms::TSPrealWorldDijkstra(g, 0, dCost);
                 std::cout<<(success?"Success!\n":"Failure!\n");
                 Menu::printInfoPath(g, 0,dCost);
                 Menu::askOptimize(g, 0, dCost);

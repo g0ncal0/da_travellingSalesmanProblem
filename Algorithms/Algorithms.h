@@ -42,9 +42,27 @@ public:
      */
     static float TSPwithTriangleApproximation(Graph* g, int startVertexId);
 
-    static bool TSPrealWorld1(Graph* g, int startVertex, double &resultLength);
 
-    static bool TSPrealWorld2(Graph* g, int startVertex, double &resultLength);
+    /**
+     * An approximation algorithm for the TSP problem, using a DFS algorithm. There is a high likelihood of false negatives, especially in graphs with very few edges. \n
+     * Complexity: O(V + E)) => O(V^2)
+     * @param g The graph on which to perform the algorithm
+     * @param startVertex The vertex on which the path starts
+     * @param resultLength The length of the tour found. This result will not yield conclusive information if the return value is false.
+     * @return True if a tour containing all vertices found, false otherwise
+     */
+    static bool TSPrealWorldDFS(Graph* g, int startVertex, double &resultLength);
+
+
+    /**
+     * An approximation algorithm for the TSP problem, using Dijkstra's algorithm. There is a high likelihood of false negatives. It doesn't work well when the starting vertex has a direct edge to a lot of other vertices. \n
+     * Complexity: O(V ^ 3)
+     * @param g The graph on which to perform the algorithm
+     * @param startVertex The vertex on which the path starts
+     * @param resultLength The length of the tour found. If no path is found, this yields the length of a tour containing nonexistent edges.
+     * @return True if a tour containing all vertices found, false otherwise
+     */
+    static bool TSPrealWorldDijkstra(Graph* g, int startVertex, double &resultLength);
 
     static float TSPGreedy(Graph* g);
 
@@ -55,6 +73,15 @@ public:
     static void anotherMST(Graph* g, int v0);
     static double TSPwithTriangleApproximation2(Graph* g, int startVertex);
 
+
+    /**
+     * An approximation algorithm for the TSP problem that always returns a tour. There is a possibility of false negatives. \n
+     * Complexity: O(V ^ 2)
+     * @param g The graph on which to perform the algorithm
+     * @param startVertex The vertex on which the path starts
+     * @param resultLength The length of the tour found. If no path is found, this yields the length of a tour that doesn't contain all the vertices.
+     * @return True if a tour containing all vertices found, false otherwise
+     */
     static bool HUBAlgorithm(Graph* g, int v0,double &resultLength);
 };
 
