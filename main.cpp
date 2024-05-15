@@ -32,7 +32,7 @@ int main() {
                 Menu::printInfoPath(g, 0, cost);
                 break;
             case 3:
-                cost = Algorithms::TSPwithTriangleApproximation(g, 0);
+                cost = Algorithms::TSPwithTriangleApproximation2(g, 0);
                 Menu::printInfoPath(g, 0, cost);
                 Menu::askOptimize(g, 0, cost);
                 break;
@@ -44,6 +44,31 @@ int main() {
             case 5:
                 cost = Algorithms::TSPChristofides(g);
                 std::cout << "Cost -> " << cost << std::endl;
+                break;
+            case 6:
+                {   double dCost=0;
+                    bool success= Algorithms::TSPrealWorldDFS(g, 0, dCost);
+                    std::cout<<(success?"Success!\n":"Failure!\n");
+                    Menu::printInfoPath(g, 0,dCost);
+                    Menu::askOptimize(g, 0, dCost);
+                }
+                break;
+            case 7:
+            {   double dCost=0;
+                bool success= Algorithms::TSPrealWorldDijkstra(g, 0, dCost);
+                std::cout<<(success?"Success!\n":"Failure!\n");
+                Menu::printInfoPath(g, 0,dCost);
+                Menu::askOptimize(g, 0, dCost);
+            }
+                break;
+            case 8:
+            {
+                double dCost=0;
+                bool success= Algorithms::HUBAlgorithm(g,0,dCost);
+                std::cout<<(success?"Success!\n":"Failure!\n");
+                Menu::printInfoPath(g, 0,dCost);
+                Menu::askOptimize(g, 0, dCost);
+            }
                 break;
             default:
                 c = false;

@@ -8,7 +8,7 @@
 // Implementation inspired on the last project "Water Management" by Filipe Correia, Gabriela Silva and Gonçalo Nunes.
 
 std::vector<std::string> Menu::getOptions(){
-    return {"Exit Program", "Repeat Instructions", "Backtracking Algorithm (It yields the optimal solution but is infeasible for big instances)", "Triangle Approximation Algorithm", "3º Algoritmo", "4º Algoritmo"};
+    return {"Exit Program", "Repeat Instructions", "Backtracking Algorithm (It yields the optimal solution but is infeasible for big instances)", "Triangle Approximation Algorithm", "3º Algoritmo", "4º Algoritmo", "Algoritmo com DFS (muitos false negatives)", "Algorithmo com Dijkstra (muitos false negatives)","Strange Hub Algorithm"};
 }
 
 void Menu::print(std::string t){
@@ -67,7 +67,8 @@ void Menu::printInfoPath(Graph* g, int v0, float cost) {
         std::cout << " ->(" << g->getDistance(v->getId(), v->getNextVertex()) << ")";
         std::cout << "-> " << v->getNextVertex();
         v = g->getVertex(v->getNextVertex());
-        if (v->getId() == 0) break;
+        if(v== nullptr){break;}
+        if (v->getId() == v0) break;
     }
 
     std::cout << std::endl << std::endl;
@@ -78,12 +79,11 @@ void Menu::printInfoPathByEdges(Graph* g, float cost){
 }
 
 void Menu::askOptimize(Graph* g, int v0, float cost) {
-    char answer;
+    std::string answer;
 
-    std::cout << "Do you want to optimize this result?\nYour answer: (y / n) ";
-    std::cin >> answer;
+    answer=getInput("Do you want to optimize this result?\nYour answer: (y / n) ");
 
-    if (answer == 'y') {
+    if (answer == "y") {
         cost = Algorithms::twoOpt(g, v0, cost);
 
         std::cout << "\nThese are the optimized results:\n";
