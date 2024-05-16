@@ -86,7 +86,7 @@ public:
 
     /**
      * An optimization algorithm 2-opt that works by changing pairs of vertexes to get a better solution
-     * Complexity: O(E)
+     * Complexity: O(V²)
      * @param g the graph
      * @param v0 first vertex
      * @param cost the initial cost found
