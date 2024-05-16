@@ -375,17 +375,150 @@ float Algorithms::TSPGreedy(Graph* g){
     return sum;
 }
 
+bool isValidMatch(edgeInfo edge, Graph* g) {
+    return (((g->getVertex(edge.s)->getDegree() % 2) == 1) && ((g->getVertex(edge.e)->getDegree() % 2) == 1));
+}
 
+void perfectMatching(Graph* g, std::vector<edgeInfo>* edges) {
+    for (const edgeInfo& edge : (*edges)) {
+        if (isValidMatch(edge, g)) {
+            g->getVertex(edge.s)->incrementDegree();
+            g->getVertex(edge.e)->incrementDegree();
 
+            //meter a edge na tree ou duplicá-la caso já lá esteja
+            if (!g->getEdgeUsedInMST(edge.s, edge.e)) {
+                g->setEdgeUsedInMST(edge.s, edge.e, true);
+            }
+            else {
+                g->setDuplicateEdge(edge.s, edge.e, true);
+            }
+        }
+    }
+}
 
-std::vector<Vertex*> getOddVertexesInTree(const std::unordered_map<Vertex *, std::vector<Vertex * >>& edges) {
-    std::vector<Vertex*> oddVertexes;
-
-    for (const auto& pair: edges) {
-        if (pair.second.size() % 2) oddVertexes.push_back(pair.first);
+std::vector<int> eulerTour(Graph* g, std::vector<edgeInfo> edges) {
+    int nEdges = 0;
+    for (int i = 0; i < g->getNoVertexes(); i++) {
+        nEdges += g->getVertex(i)->getDegree();
     }
 
-    return oddVertexes;
+    nEdges /= 2;
+
+    std::vector<int> tour;
+    tour.push_back(0);
+
+    Vertex* vertex = g->getVertex(0);
+    bool end = true;
+    bool goBackwards = false;
+    int goTo;
+
+    float minDistance;
+    int next;
+
+    while (nEdges > 0) {
+        end = true;
+        goBackwards = false;
+
+        for (auto & edge : edges) {
+            if (edge.s == vertex->getId()) {
+                if ((edge.e == 0) && (g->getVertex(0)->getDegree() == 1) && (nEdges > 1)) {
+                    continue;
+                }
+                else if (g->isDuplicateEdge(vertex->getId(), edge.e) && g->getEdgeUsedInMST(vertex->getId(), edge.e)) {
+                    g->setEdgeUsedInMST(vertex->getId(), edge.e, false);
+                }
+                else if (g->isDuplicateEdge(vertex->getId(), edge.e)) {
+                    goBackwards = true;
+                    goTo = edge.e;
+                    continue;
+                }
+                else if (g->getEdgeUsedInMST(vertex->getId(), edge.e)){
+                    g->setEdgeUsedInMST(vertex->getId(), edge.e, false);
+                }
+                else continue;
+
+                nEdges--;
+
+                vertex->decrementDegree();
+                g->getVertex(edge.e)->decrementDegree();
+
+                tour.push_back(edge.e);
+
+                vertex = g->getVertex(edge.e);
+
+                end = false;
+                break;
+            }
+
+            else if (edge.e == vertex->getId()) {
+                if ((edge.s == 0) && (g->getVertex(0)->getDegree() == 1) && (nEdges > 1)) {
+                    continue;
+                }
+                else if (g->isDuplicateEdge(vertex->getId(), edge.s) && g->getEdgeUsedInMST(vertex->getId(), edge.s)) {
+                    g->setEdgeUsedInMST(vertex->getId(), edge.s, false);
+                }
+                else if (g->isDuplicateEdge(vertex->getId(), edge.s)) {
+                    goBackwards = true;
+                    goTo = edge.s;
+                    continue;
+                }
+                else if (g->getEdgeUsedInMST(vertex->getId(), edge.s)){
+                    g->setEdgeUsedInMST(vertex->getId(), edge.s, false);
+                }
+                else continue;
+
+                nEdges--;
+
+                vertex->decrementDegree();
+                g->getVertex(edge.s)->decrementDegree();
+
+                tour.push_back(edge.s);
+
+                vertex = g->getVertex(edge.s);
+
+                end = false;
+                break;
+            }
+        }
+
+        if (goBackwards && end) {
+            nEdges--;
+
+            vertex->decrementDegree();
+            g->getVertex(goTo)->decrementDegree();
+
+            tour.push_back(goTo);
+
+            vertex = g->getVertex(goTo);
+
+            end = false;
+        }
+
+        if (end) {
+            next = -1;
+
+            for (int i = 0; i < g->getNoVertexes(); i++) {
+                minDistance = std::numeric_limits<float>::max();
+
+                if (g->getVertex(i)->getDegree() == 0 || i == vertex->getId()) continue;
+
+                if (g->getDistance(vertex->getId(), i) < minDistance) {
+                    next = i;
+                    minDistance = g->getDistance(vertex->getId(), i) < minDistance;
+                }
+            }
+
+            if (next == -1) break;
+
+            nEdges--;
+            vertex->decrementDegree();
+            tour.push_back(next);
+            vertex = g->getVertex(next);
+            vertex->decrementDegree();
+        }
+    }
+
+    return tour;
 }
 
 float Algorithms::TSPChristofides(Graph* g) {
@@ -398,36 +531,56 @@ float Algorithms::TSPChristofides(Graph* g) {
         vertex->setVisited(false);
     }
 
-    //first mst algorithm
-    /*std::unordered_map<Vertex *, std::vector<Vertex * >> edges;
-    auxMST(g, vert, edges);
+    auto* edges = new std::vector<edgeInfo>((g->getNoVertexes() * (g->getNoVertexes() - 1)) / 2);
+    anotherMST(g, 0, edges);
 
-    for (auto& p : edges) {
-        for (auto& v : p.second) {
-            std::cout << p.first->getId() << " -> " << v->getId() << std::endl;
-        }
-    }*/
+    for (auto vertex: g->getVertexSet()) {
+        vertex->setVisited(false);
+    }
 
-    //second mst algorithm
-    anotherMST(g, 0);
+    perfectMatching(g, edges);
 
     for (int i = 0; i < g->getNoVertexes(); i++) {
         for (int j = i + 1; j < g->getNoVertexes(); j++) {
             if (g->getEdgeUsedInMST(i, j)) {
-                std::cout << g->getVertex(i)->getId() << " -> " << g->getVertex(j)->getId() << std::endl;
+                std::cout << g->getVertex(i)->getId() << " -> " << g->getVertex(j)->getId() << "   Duplo - " << g->isDuplicateEdge(i, j) << std::endl;
             }
         }
     }
 
-    /*for (auto vertex: g->getVertexSet()) {
-        vertex->setVisited(false);
+    for (int i = 0; i < g->getNoVertexes(); i++) {
+        std::cout << i << " = " << g->getVertex(i)->getDegree() << std::endl;
     }
 
-    std::vector<Vertex*> oddVertexes = getOddVertexesInTree(edges);*/
+    std::vector<int> tour = eulerTour(g, *edges);
+    if (tour.back() != 0) tour.push_back(0);
 
+    for (int i : tour) std::cout << i << " -> ";
+    std::cout << std::endl;
 
+    auto* newTour = new std::vector<int>(g->getNoVertexes() + 1);
+    (*newTour)[0] = 0;
+    (*newTour)[g->getNoVertexes()] = 0;
+    g->getVertex(0)->setVisited(true);
 
-    return 0.0;
+    int index = 1;
+    for (int v : tour) {
+        if (!g->getVertex(v)->isVisited()) {
+            (*newTour)[index] = v;
+            g->getVertex(v)->setVisited(true);
+            index++;
+        }
+    }
+
+    float cost = 0;
+    for (int i = 0; i < g->getNoVertexes(); i++) {
+        cost += g->getDistance((*newTour)[i], (*newTour)[i + 1]);
+    }
+
+    for (int i : *newTour) std::cout << i << " -> ";
+    std::cout << std::endl;
+
+    return cost;
 }
 
 void swap(std::vector<int>& path, int a, int b) {
@@ -515,8 +668,7 @@ int getNewVertexes(int u, int v, Graph* g) {
     return 1;
 }
 
-void Algorithms::anotherMST(Graph* g, int v0) {
-    auto* edges = new std::vector<edgeInfo>((g->getNoVertexes() * (g->getNoVertexes() - 1)) / 2);
+void Algorithms::anotherMST(Graph* g, int v0, std::vector<edgeInfo>* edges) {
     auto it = edges->begin();
 
     for (int i = 0; i < g->getNoVertexes(); i++) {
@@ -588,7 +740,7 @@ void Algorithms::anotherMST(Graph* g, int v0) {
             notUsedYet.push_back(*itEdges);
         }
     }
-    free(edges);
+
 }
 
 
@@ -623,7 +775,8 @@ double Algorithms::TSPwithTriangleApproximation2(Graph* g, int startVertex)
     for (auto vertex: g->getVertexSet()) {
         vertex->setVisited(false);
     }
-    Algorithms::anotherMST(g, startVertex);
+    auto* edges = new std::vector<edgeInfo>((g->getNoVertexes() * (g->getNoVertexes() - 1)) / 2);
+    Algorithms::anotherMST(g, startVertex, edges);
 
 
     for (auto vertex: g->getVertexSet()) {
@@ -700,3 +853,68 @@ bool Algorithms::HUBAlgorithm(Graph* g, int v0,double &resultLength){
 }
 
 
+
+
+
+bool Algorithms::HUBAlgorithm2(Graph* g, int v0,double &resultLength){
+    resultLength=0;
+    std::set<Vertex*> hub;
+    auto source=g->getVertex(v0);
+    source->setNextVertex(0);
+    hub.emplace(source);
+
+    while(hub.size()<g->getNoVertexes())
+    {
+        Vertex* firstV=0;
+        for(Vertex* vert:g->getVertexSet())
+        {
+            {
+                if (hub.find(vert)==hub.end())
+                {
+                    for (Vertex* other_vert:hub) {
+                        if(g->isEdgeInGraph(other_vert->getId(),vert->getId())&&g->isEdgeInGraph(vert->getId(),other_vert->getNextVertex())) {
+                            firstV=vert;
+                        }
+                    }
+                    break;
+                }
+            }
+
+        }
+        if(!firstV)
+        {
+            break;
+        }
+
+
+        int min_before=-1;
+        int min_next=-1;
+        double lengthAdded=std::numeric_limits<double>::max();
+        for (Vertex* vert:hub) {
+            if(g->isEdgeInGraph(vert->getId(),firstV->getId())&&g->isEdgeInGraph(firstV->getId(),vert->getNextVertex())){
+                auto newLength=g->getDistance(vert->getId(),firstV->getId())+g->getDistance(firstV->getId(),vert->getNextVertex());
+                if (newLength<lengthAdded)
+                {
+                    lengthAdded=newLength;
+                    min_before=vert->getId();
+                    min_next=vert->getNextVertex();
+                }
+            }
+        }
+
+        if (min_before==-1)
+        {
+            break;
+        }
+        resultLength+=lengthAdded-g->getDistance(min_before,min_next);
+        firstV->setNextVertex(min_next);
+        g->getVertex(min_before)->setNextVertex(firstV->getId());
+        hub.emplace(firstV);
+
+    }
+
+
+
+
+    return hub.size()==g->getNoVertexes();
+}

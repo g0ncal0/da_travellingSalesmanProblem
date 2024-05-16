@@ -43,7 +43,7 @@ int main() {
                 break;
             case 5:
                 cost = Algorithms::TSPChristofides(g);
-
+                std::cout << "Cost -> " << cost << std::endl;
                 break;
             case 6:
                 {   double dCost=0;
@@ -65,6 +65,15 @@ int main() {
             {
                 double dCost=0;
                 bool success= Algorithms::HUBAlgorithm(g,0,dCost);
+                std::cout<<(success?"Success!\n":"Failure!\n");
+                Menu::printInfoPath(g, 0,dCost);
+                Menu::askOptimize(g, 0, dCost);
+            }
+                break;
+            case 9:
+            {
+                double dCost=0;
+                bool success= Algorithms::HUBAlgorithm2(g,0,dCost);
                 std::cout<<(success?"Success!\n":"Failure!\n");
                 Menu::printInfoPath(g, 0,dCost);
                 Menu::askOptimize(g, 0, dCost);
