@@ -71,6 +71,14 @@ public:
     static float twoOpt(Graph* g, int v0, float cost);
 
     static void anotherMST(Graph* g, int v0);
+
+    /**
+     * An approximation algorithm for the TSP problem, using a triangular approximation algorithm. \n
+     * Complexity: O(E * log(V)))
+     * @param g The graph on which to perform the algorithm
+     * @param startVertexId The vertex on which the path starts
+     * @return The length of the path found
+     */
     static double TSPwithTriangleApproximation2(Graph* g, int startVertex);
 
 
