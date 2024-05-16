@@ -42,6 +42,13 @@ public:
      */
     static float TSPwithTriangleApproximation(Graph* g, int startVertexId);
 
+    /**
+     * Gives an approximated result to TSP problem using greedy approach
+     * Basically, goes to each vertex and finds the edge with lower weight
+     * Time Complexity O(V^2)
+     * @param g Graph assumed to be complete
+     * @return
+    */
     static float TSPGreedy(Graph* g);
 
     static float TSPChristofides(Graph* g);

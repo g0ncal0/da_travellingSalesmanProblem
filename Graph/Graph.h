@@ -35,6 +35,9 @@ protected:
     float latitude;
     float longitude;
 
+    std::vector<int> adjVertex;
+    int degree = 0;
+
     //-1 for invalid...
     int nextVertex=-1; // contains the next vertex in the path
 
@@ -50,6 +53,9 @@ public:
     void setProcessing(bool p){processing = p;}
     int getNextVertex(){return nextVertex;}
     void setNextVertex(int nextVertex){this->nextVertex = nextVertex;}
+    int getDegree() const {return degree;}
+    void setDegree(int degree) {this->degree = degree;}
+    void incrementDegree() {degree++;}
     friend class Graph;
 };
 
@@ -59,7 +65,7 @@ protected:
     std::vector<std::vector<float>*>* data; // save it as negative if not in graph - if 0, it has not been calculated yet
     int noVertexes;
     std::vector<unsigned char>* visited; // 0: unvisited, 1: visited, 2+: for special algorithms
-    std::vector<bool>* edgeUsed;
+    std::vector<bool>* edgeUsedInMST;
 
 
 private:
@@ -70,12 +76,9 @@ public:
     // Yes, you need the noVertexes when init the graph.. perharps we can do this by adding a line on each file with info of noVertexes
     Graph(int noVertexes){
         data = new std::vector<std::vector<float>*>(noVertexes - 1);
-        edgeUsed = new std::vector<bool>((noVertexes * (noVertexes - 1))/ 2); // to store the edges that were used.
+        edgeUsedInMST = new std::vector<bool>((noVertexes * (noVertexes - 1))/ 2); // to store the edges that were used.
         for(int i = 0; i < noVertexes; i++){
             (*data)[i] = new std::vector<float>(noVertexes - 1 - i);
-        }
-        for(int i = 0; i < noVertexes; i++){
-            (*edgeUsed)[i] = false;
         }
         this->noVertexes = noVertexes;
         visited = new std::vector<unsigned char>(noVertexes, false);
@@ -87,7 +90,7 @@ public:
         }
         delete [] data;
         delete [] visited;
-        delete [] edgeUsed;
+        delete [] edgeUsedInMST;
     }
 
     int getNoVertexes(){
@@ -235,23 +238,23 @@ public:
 
     void initializeEdgesUsed(){
         for(int i = 0; i < (noVertexes * (noVertexes - 1)) / 2; i++){
-            (*edgeUsed)[i] = false;
+            (*edgeUsedInMST)[i] = false;
         }
     }
 
 
-    void setEdgeUsed(int start, int end, bool used){
+    void setEdgeUsedInMST(int start, int end, bool used){
         if(start >= noVertexes || end >= noVertexes || start < 0 || end < 0){
             return;
         }
         if(start == end){
             return;
         }
-        (*edgeUsed)[getposition(start, end)] = used;
+        (*edgeUsedInMST)[getposition(start, end)] = used;
     }
 
-    bool getEdgeUsed(int start, int end){
-        return (*edgeUsed)[getposition(start, end)];
+    bool getEdgeUsedInMST(int start, int end){
+        return (*edgeUsedInMST)[getposition(start, end)];
     }
 };
 

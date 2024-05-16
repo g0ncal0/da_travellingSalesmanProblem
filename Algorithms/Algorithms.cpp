@@ -170,11 +170,7 @@ float Algorithms::TSPwithTriangleApproximation(Graph *g, int startVertexId) {
 
 
 
-/**
- * Gives an approximated result to TSP problem using greedy approach
- * @param g Graph assumed to be complete
- * @return
-*/
+
 float Algorithms::TSPGreedy(Graph* g){
     g->initializeVisited();
     float sum = 0;
@@ -195,7 +191,23 @@ float Algorithms::TSPGreedy(Graph* g){
             }
         }
         if(indexNext == -1){
-            std::cout << "Infeasable TSP";
+            std::cout << "Infeasable TSP\n";
+            float gohome = g->getDistance(current->getId(), 0);
+            if(gohome >= 1){
+                sum += gohome;
+            }else{
+                int trying = 0;
+                while(gohome <= 0){
+                    if(trying > g->getNoVertexes()){
+                        gohome = 1;
+                        break;
+                    }
+                    gohome = g->getDistance(current->getId(), trying) + g->getDistance(trying, 0);
+                    trying++;
+                }
+                sum += gohome;
+            }
+            std::cout << "However, you could have an approximated cost of " << sum << " if you ignored " << i << " vertexes.";
             return -1;
         }
         sum += min;
@@ -245,9 +257,10 @@ float Algorithms::TSPChristofides(Graph* g) {
 
     //second mst algorithm
     anotherMST(g, 0);
+
     for (int i = 0; i < g->getNoVertexes(); i++) {
         for (int j = i + 1; j < g->getNoVertexes(); j++) {
-            if (g->getEdgeUsed(i, j)) {
+            if (g->getEdgeUsedInMST(i, j)) {
                 std::cout << g->getVertex(i)->getId() << " -> " << g->getVertex(j)->getId() << std::endl;
             }
         }
@@ -350,37 +363,45 @@ bool isValidEdge(int u, int v, Graph* g) {
 }
 
 void Algorithms::anotherMST(Graph* g, int v0) {
-    //estou a assumir que o vetor que armazena se a edge existe começa com tudo a falso para eu usar esse valor para dizer se a edge está ou não na MST, talvez seja preciso inicializar isso à mão depois
+    auto* edges = new std::vector<edgeInfo>((g->getNoVertexes() * (g->getNoVertexes() - 1)) / 2);
+    auto it = edges->begin();
+
+    for (int i = 0; i < g->getNoVertexes(); i++) {
+        for (int j = i + 1; j < g->getNoVertexes(); j++) {
+            (*it) = {i,j, g->getDistance(i, j)};
+            it++;
+        }
+    }
+
+    std::sort(edges->begin(), edges->end(), [](const edgeInfo& a, const edgeInfo& b) {
+        return a.distance < b.distance;
+    });
 
     g->getVertex(v0)->setVisited(true);
     int sizeMST = 1;
     int sizeGraph = g->getNoVertexes();
     float distance;
     int a, b;
+    Vertex* v1;
+    Vertex* v2;
 
-    while (sizeMST < sizeGraph) {
-        float min = std::numeric_limits<float>::max();
-        a = b = -1;
-
-        for (int i = 0; i < sizeGraph; i++) {
-            for (int j = i + 1; j < sizeGraph; j++) {
-                distance = g->getDistance(i, j);
-                if (distance < min) {
-                    if (isValidEdge(i, j, g)) {
-                        min = distance;
-                        a = i;
-                        b = j;
-                    }
-                }
-            }
-        }
-
-        if (a != -1 && b != -1) {
+    for (auto itEdges = edges->begin(); itEdges != edges->end(); itEdges++) {
+        if (isValidEdge(itEdges->s, itEdges->e, g)) {
             sizeMST++;
-            g->getVertex(a)->setVisited(true);
-            g->getVertex(b)->setVisited(true);
-            g->setEdgeUsed(a, b, true);
+
+            v1 = g->getVertex(itEdges->s);
+            v2 = g->getVertex(itEdges->e);
+
+            v1->setVisited(true);
+            v1->incrementDegree();
+            v2->setVisited(true);
+            v2->incrementDegree();
+
+            g->setEdgeUsedInMST(itEdges->s, itEdges->e, true);
+
+            if (sizeMST == sizeGraph) break;
         }
-        else break;
     }
+
+    free(edges);
 }

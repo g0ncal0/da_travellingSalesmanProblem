@@ -163,6 +163,7 @@ Graph* Parser::parseExtraFullyConnectedWithId(int answer){
     int dest;
     float distance;
 
+
     ifstream nodes("../Data/Extra_Fully_Connected_Graphs/nodes.csv");
     getline(nodes, line);
 
