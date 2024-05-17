@@ -9,16 +9,17 @@
 #include <chrono>
 
 void Statistics::run(){
-    /*
+
     std::cout << "\nGREEDY\n";
 
     for(int i = 1; i <= 12; i++) {
         Graph *g = Parser::parseExtraFullyConnectedWithId(i);
         auto s = std::chrono::system_clock::now();
-        Algorithms::TSPGreedy(g);
+        float r;
+        std::cout << Algorithms::TSPGreedy(g, r) << ", ";
         auto e = std::chrono::system_clock::now();
         auto d = e - s;
-        std::cout << std::chrono::duration<double, std::micro>(d).count() << ", ";
+        //std::cout << std::chrono::duration<double, std::micro>(d).count() << ", ";
     }
     std::cout << "\nAPPROXIMATION\n";
 
@@ -26,32 +27,50 @@ void Statistics::run(){
         Graph *g = Parser::parseExtraFullyConnectedWithId(i);
 
         auto s = std::chrono::system_clock::now();
-        Algorithms::TSPwithTriangleApproximation(g, 0);
+        std::cout << Algorithms::TSPwithTriangleApproximation(g, 0) << ", ";
         auto e = std::chrono::system_clock::now();
         auto d = e - s;
-        std::cout << std::chrono::duration<double, std::micro>(d).count() << ", ";
+        //std::cout << std::chrono::duration<double, std::micro>(d).count() << ", ";
     }
-    std::cout << "\nCHRISTOFIDES\n";
+    std::cout << "\nHUBAlgorithm\n";
 
-    for(int i = 1; i <= 12; i++) {
+    for(int i = 4; i <= 12; i++) {
         Graph *g = Parser::parseExtraFullyConnectedWithId(i);
         auto s = std::chrono::system_clock::now();
-        Algorithms::TSPChristofides(g);
+        double dCost=0;
+        Algorithms::HUBAlgorithm(g,0,dCost);
+        std::cout << dCost << ", ";
         auto e = std::chrono::system_clock::now();
         auto d = e - s;
-        std::cout << std::chrono::duration<double, std::micro>(d).count() << ", ";
-    }*/
+        //std::cout << std::chrono::duration<double, std::micro>(d).count() << ", ";
+    }
 
     std::cout << "\nGREEDY COM 2-OPT\n";
 
     for(int i = 1; i <= 12; i++) {
         Graph *g = Parser::parseExtraFullyConnectedWithId(i);
         auto s = std::chrono::system_clock::now();
-        float cost = Algorithms::TSPGreedy(g);
-        Algorithms::twoOpt(g, 0, cost);
+        float cost;
+        Algorithms::TSPGreedy(g, cost);
+        std::cout << Algorithms::twoOpt(g, 0, cost) << ", ";
+
         auto e = std::chrono::system_clock::now();
         auto d = e - s;
-        std::cout << std::chrono::duration<double, std::micro>(d).count() << ", ";
+        //std::cout << std::chrono::duration<double, std::micro>(d).count() << ", ";
     }
+
+    std::cout << "\nDijkstra\n";
+
+    for(int i = 1; i <= 12; i++) {
+        Graph *g = Parser::parseExtraFullyConnectedWithId(i);
+        auto s = std::chrono::system_clock::now();
+        double dCost=0;
+        Algorithms::TSPrealWorldDijkstra(g, 0, dCost);
+        std::cout << dCost << ", ";
+        auto e = std::chrono::system_clock::now();
+        auto d = e - s;
+        //std::cout << std::chrono::duration<double, std::micro>(d).count() << ", ";
+    }
+
 
 }

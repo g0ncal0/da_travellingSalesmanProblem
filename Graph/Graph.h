@@ -41,10 +41,14 @@ protected:
     //-1 for invalid...
     int nextVertex=-1; // contains the next vertex in the path
 
+    Vertex* prev= nullptr;
+    double distanceFromSource=0;
 public:
     Vertex(int id, float lat, float lon) : id(id), latitude(lat), longitude(lon){};
     Vertex(int id) : id(id) {};
     int getId() const{return id;}
+    double getDistanceFromSource()const {return distanceFromSource;}
+    void setDistanceFromSource(double newDistance) {distanceFromSource=newDistance;}
     float getLat(){return latitude;}
     float getLon(){return longitude;}
     bool isVisited(){return visited;}
@@ -53,9 +57,13 @@ public:
     void setProcessing(bool p){processing = p;}
     int getNextVertex(){return nextVertex;}
     void setNextVertex(int nextVertex){this->nextVertex = nextVertex;}
+
+    Vertex* getPrevVertex(){return prev;}
+    void setPrevVertex(Vertex* prevVertex){this->prev = prevVertex;}
     int getDegree() const {return degree;}
     void setDegree(int degree) {this->degree = degree;}
     void incrementDegree() {degree++;}
+    void decrementDegree() {degree--;}
     friend class Graph;
 };
 
@@ -66,6 +74,7 @@ protected:
     int noVertexes;
     std::vector<unsigned char>* visited; // 0: unvisited, 1: visited, 2+: for special algorithms
     std::vector<bool>* edgeUsedInMST;
+    std::vector<bool>* duplicatedEdge;
 
 
 private:
@@ -77,6 +86,7 @@ public:
     Graph(int noVertexes){
         data = new std::vector<std::vector<float>*>(noVertexes - 1);
         edgeUsedInMST = new std::vector<bool>((noVertexes * (noVertexes - 1))/ 2); // to store the edges that were used.
+        duplicatedEdge = new std::vector<bool>((noVertexes * (noVertexes - 1))/ 2);
         for(int i = 0; i < noVertexes; i++){
             (*data)[i] = new std::vector<float>(noVertexes - 1 - i);
         }
@@ -163,7 +173,11 @@ public:
 
     Vertex* getVertex(int id){return vertexSet[id];}
 
-    std::vector<Vertex*> getVertexSet() const{
+    const std::vector<Vertex*>& getVertexSet() const{
+        return vertexSet;
+    }
+
+    std::vector<Vertex*> getVertexSetCopy() const{
         return vertexSet;
     }
 
@@ -255,6 +269,20 @@ public:
 
     bool getEdgeUsedInMST(int start, int end){
         return (*edgeUsedInMST)[getposition(start, end)];
+    }
+
+    void setDuplicateEdge(int start, int end, bool used){
+        if(start >= noVertexes || end >= noVertexes || start < 0 || end < 0){
+            return;
+        }
+        if(start == end){
+            return;
+        }
+        (*duplicatedEdge)[getposition(start, end)] = used;
+    }
+
+    bool isDuplicateEdge(int start, int end){
+        return (*duplicatedEdge)[getposition(start, end)];
     }
 };
 

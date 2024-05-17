@@ -2,6 +2,13 @@ Consideramos que o grafo é undirected! - um caminho pode ser corrido para qualq
 Time is not very good when need edges that exist -> requires O(n)
 
 
+Problema da heuristica que usa o algoritmo de Dijktra: Quão mais ligado for o gráfico, mais falha, porque o caminho mais curto para qualquer vértice passa a ser o que vai da origem diretamente até lá e depois a reconstrução acontece apenas por ordem numérica de indices. A minha solução será ordená-los por distância antes da reconstrução.
+
+
+
+
+
+
 
 # TIME EXECUTION GRAPH:
 

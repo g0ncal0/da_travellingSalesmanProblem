@@ -206,7 +206,7 @@ Graph* Parser::parseRealWorld() {
     string edgesFile = nodesFile;
     int nVertex;
 
-    cout << "\nWhich graph do you want?\n1. Graph 1\n2. Graph 2\n3. Graph3\nYour answer: ";
+    cout << "\nWhich graph do you want?\n1. Graph 1\n2. Graph 2\n3. Graph 3\nYour answer: ";
     cin >> answer;
 
     if (answer == 2) {

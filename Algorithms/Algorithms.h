@@ -9,7 +9,17 @@
 #include <set>
 #include <unordered_map>
 class Algorithms {
+    /**
+     * The recursive function of Backtracking Algorithm that actually does almost all the work
+     * Complexity: O(V!)
+     * @param g the graph
+     * @param id of the vertex that we are analysing
+     * @param costToBeat the maximum cost for this branch, if actual cost becomes bigger than this number the function will return false and cut this branch
+     * @param numberVisited -> number of already visited vertexes, if we already visited all the vertexes the function will return true
+     * @return true if there is a possible solution in this branch
+     */
     static bool auxTSPwithBacktracking(Graph* g, int id, float& costToBeat, int numberVisited);
+
     /**
      * A recursive depth-first search used by the triangular approximation algorithm to construct the final path.\n
      * Complexity: O(V + E)
@@ -20,6 +30,7 @@ class Algorithms {
      * @return The length of the path, excluding the final edge to the starting vertex
      */
     static float auxTriangleApproximationDFS(Graph *g,Vertex* vert, std::unordered_map<Vertex*,std::vector<Vertex*>>& edges,Vertex*& currentLast);
+
     /**
      * An implementation of Kruskal's algorithm, used to construct a minimum spanning tree for the triangular approximation algorithm.\n
      * Complexity: O(V + E)
@@ -30,7 +41,12 @@ class Algorithms {
     static void auxMST(Graph* g,Vertex* startVertex,std::unordered_map<Vertex*,std::vector<Vertex*>>& edges);
 public:
 
-
+    /**
+     * An backtracking algorithm for the TSP. It gets an optimal solution but it's infeasible for medium and big graphs
+     * Complexity: O(V!)
+     * @param g the graph
+     * @return the minimum cost of the TSP or -1 if it is impossible
+     */
     static float TSPwithBacktracking(Graph* g);
 
     /**
@@ -42,20 +58,65 @@ public:
      */
     static float TSPwithTriangleApproximation(Graph* g, int startVertexId);
 
+
     /**
-     * Gives an approximated result to TSP problem using greedy approach
-     * Basically, goes to each vertex and finds the edge with lower weight
-     * Time Complexity O(V^2)
-     * @param g Graph assumed to be complete
-     * @return
-    */
-    static float TSPGreedy(Graph* g);
+     * An approximation algorithm for the TSP problem, using a DFS algorithm. There is a high likelihood of false negatives, especially in graphs with very few edges. \n
+     * Complexity: O(V + E)) => O(V^2)
+     * @param g The graph on which to perform the algorithm
+     * @param startVertex The vertex on which the path starts
+     * @param resultLength The length of the tour found. This result will not yield conclusive information if the return value is false.
+     * @return True if a tour containing all vertices found, false otherwise
+     */
+    static bool TSPrealWorldDFS(Graph* g, int startVertex, double &resultLength);
+
+
+    /**
+     * An approximation algorithm for the TSP problem, using Dijkstra's algorithm. There is a high likelihood of false negatives. It doesn't work well when the starting vertex has a direct edge to a lot of other vertices. \n
+     * Complexity: O(V ^ 3)
+     * @param g The graph on which to perform the algorithm
+     * @param startVertex The vertex on which the path starts
+     * @param resultLength The length of the tour found. If no path is found, this yields the length of a tour containing nonexistent edges.
+     * @return True if a tour containing all vertices found, false otherwise
+     */
+    static bool TSPrealWorldDijkstra(Graph* g, int startVertex, double &resultLength);
+
+    /**
+    * Gives an approximated result to TSP problem using greedy approach
+    * Basically, goes to each vertex and finds the edge with lower weight
+     * Allows the user to decide what to do in case of not being allowed to continue without revisiting a vertex
+    * Time Complexity O(V^2)
+    * @param g Graph assumed to be complete
+    * @param sum The value found
+    * @return 0 if ok, 1 if ok but used strategies that will cause errors in printing the edges, non-0 and non-1 if error
+   */
+    static int TSPGreedy(Graph* g, float &sum);
+
 
     static float TSPChristofides(Graph* g);
 
+    /**
+     * An optimization algorithm 2-opt that works by changing pairs of vertexes to get a better solution
+     * Complexity: O(V²)
+     * @param g the graph
+     * @param v0 first vertex
+     * @param cost the initial cost found
+     * @return a better cost or initial cost if no upgrade was found
+     */
     static float twoOpt(Graph* g, int v0, float cost);
 
-    static void anotherMST(Graph* g, int v0);
+    static void anotherMST(Graph* g, int v0, std::vector<edgeInfo>* edges);
+    static double TSPwithTriangleApproximation2(Graph* g, int startVertex);
+
+
+    /**
+     * An approximation algorithm for the TSP problem that always returns a tour. There is a possibility of false negatives. \n
+     * Complexity: O(V ^ 2)
+     * @param g The graph on which to perform the algorithm
+     * @param startVertex The vertex on which the path starts
+     * @param resultLength The length of the tour found. If no path is found, this yields the length of a tour that doesn't contain all the vertices.
+     * @return True if a tour containing all vertices found, false otherwise
+     */
+    static bool HUBAlgorithm(Graph* g, int v0,double &resultLength);
 };
 
 

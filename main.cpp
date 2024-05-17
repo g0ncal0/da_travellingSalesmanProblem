@@ -7,6 +7,10 @@
 
 int main() {
 
+    // Insert this to run statistics
+    // Statistics::run();
+    // return 0;
+
     Graph* g = Parser::parse();
 
 
@@ -42,23 +46,56 @@ int main() {
                 Menu::askOptimize(g, 0, cost);
                 break;
             case 4:
-                cost = Algorithms::TSPGreedy(g);
+            {
+                int a = Algorithms::TSPGreedy(g, cost);
                 e= std::chrono::system_clock::now();
-                Menu::printInfoPath(g, 0, cost);
-                Menu::askOptimize(g, 0, cost);
+                if(a == 0){
+                    Menu::printInfoPath(g, 0, cost);
+                    Menu::askOptimize(g, 0, cost);
+                }
+
                 break;
+            }
             case 5:
                 cost = Algorithms::TSPChristofides(g);
-                Menu::printInfoPath(g, 0, cost);
                 e= std::chrono::system_clock::now();
+                Menu::printInfoPath(g, 0, cost);
                 break;
             case 6:
-                Statistics::run();
+                {
+                    double dCost=0;
+                    bool success= Algorithms::TSPrealWorldDFS(g, 0, dCost);
+                    e= std::chrono::system_clock::now();
+                    std::cout<<(success?"Success!\n":"Failure!\n");
+                    Menu::printInfoPath(g, 0,dCost);
+                    Menu::askOptimize(g, 0, dCost);
+                }
+                break;
+            case 7:
+            {   double dCost=0;
+                bool success= Algorithms::TSPrealWorldDijkstra(g, 0, dCost);
+                e= std::chrono::system_clock::now();
+                std::cout<<(success?"Success!\n":"Failure!\n");
+                Menu::printInfoPath(g, 0,dCost);
+                Menu::askOptimize(g, 0, dCost);
+            }
+                break;
+            case 8:
+            {
+                double dCost=0;
+                bool success= Algorithms::HUBAlgorithm(g,0,dCost);
+                e= std::chrono::system_clock::now();
+                std::cout<<(success?"Success!\n":"Failure!\n");
+                Menu::printInfoPath(g, 0,dCost);
+                Menu::askOptimize(g, 0, dCost);
+            }
                 break;
             default:
                 c = false;
                 break;
         }
+
+        if(i == 0) break;
 
         auto d = e - s;
         std::cout << "\nThe duration of this algorithm was: " << std::chrono::duration<double, std::nano>(d).count() << " ns\n";
@@ -67,12 +104,6 @@ int main() {
 
     Menu::print("Thanks for using our program. This was developed by Filipe Correia, Gabriela Silva and Gonçalo Nunes.");
 
-    /* INSTRUÇÕES PARA TIRAR TEMPOS
-        auto s = std::chrono::system_clock::now();
-        auto e = std::chrono::system_clock::now();
-        auto d = e - s;
-        std::cout << "PARSER TIME DURATION: " << std::chrono::duration<double, std::nano>(d).count() << " ns\n";
-    */
 
     return 0;
 }
