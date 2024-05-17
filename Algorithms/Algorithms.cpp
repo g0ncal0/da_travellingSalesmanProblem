@@ -816,7 +816,7 @@ double auxTriangleApproximationDFS2(Graph *g, Vertex *vert,Vertex *&currentLast)
 }
 
 
-double Algorithms::TSPwithTriangleApproximation2(Graph* g, int startVertex)
+double Algorithms::TSPwithTriangleApproximationPrim(Graph* g, int startVertex)
 {
 
 

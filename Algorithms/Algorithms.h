@@ -113,7 +113,7 @@ public:
      * @param startVertexId The vertex on which the path starts
      * @return The length of the path found
      */
-    static double TSPwithTriangleApproximation2(Graph* g, int startVertex);
+    static double TSPwithTriangleApproximationPrim(Graph* g, int startVertex);
 
 
     /**
