@@ -105,6 +105,14 @@ public:
     static float twoOpt(Graph* g, int v0, float cost);
 
     static void anotherMST(Graph* g, int v0, std::vector<edgeInfo>* edges);
+
+    /**
+     * An approximation algorithm for the TSP problem, using a triangular approximation algorithm. \n
+     * Complexity: O(E * log(V)))
+     * @param g The graph on which to perform the algorithm
+     * @param startVertexId The vertex on which the path starts
+     * @return The length of the path found
+     */
     static double TSPwithTriangleApproximation2(Graph* g, int startVertex);
 
 
@@ -117,6 +125,15 @@ public:
      * @return True if a tour containing all vertices found, false otherwise
      */
     static bool HUBAlgorithm(Graph* g, int v0,double &resultLength);
+    /**
+ * An approximation algorithm for the TSP problem that always returns a tour. There is a possibility of false negatives. It's more complex than the first version due to improved search for new vertices, but, for the graphs given the results aren't noticeably different in terms of paths. \n
+ * Complexity: O(V ^ 3)
+ * @param g The graph on which to perform the algorithm
+ * @param startVertex The vertex on which the path starts
+ * @param resultLength The length of the tour found. If no path is found, this yields the length of a tour that doesn't contain all the vertices.
+ * @return True if a tour containing all vertices found, false otherwise
+ */
+    static bool HUBAlgorithm2(Graph* g, int v0,double &resultLength);
 };
 
 

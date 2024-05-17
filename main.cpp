@@ -90,6 +90,15 @@ int main() {
                 Menu::askOptimize(g, 0, dCost);
             }
                 break;
+            case 9:
+            {
+                double dCost=0;
+                bool success= Algorithms::HUBAlgorithm2(g,0,dCost);
+                std::cout<<(success?"Success!\n":"Failure!\n");
+                Menu::printInfoPath(g, 0,dCost);
+                Menu::askOptimize(g, 0, dCost);
+            }
+                break;
             default:
                 c = false;
                 break;

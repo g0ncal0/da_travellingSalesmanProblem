@@ -905,3 +905,70 @@ bool Algorithms::HUBAlgorithm(Graph* g, int v0,double &resultLength){
 
     return hub.size()==g->getNoVertexes();
 }
+
+
+
+
+
+bool Algorithms::HUBAlgorithm2(Graph* g, int v0,double &resultLength){
+    resultLength=0;
+    std::set<Vertex*> hub;
+    auto source=g->getVertex(v0);
+    source->setNextVertex(0);
+    hub.emplace(source);
+
+    while(hub.size()<g->getNoVertexes())
+    {
+        Vertex* firstV=0;
+        for(Vertex* vert:g->getVertexSet())
+        {
+            {
+                if (hub.find(vert)==hub.end())
+                {
+                    for (Vertex* other_vert:hub) {
+                        if(g->isEdgeInGraph(other_vert->getId(),vert->getId())&&g->isEdgeInGraph(vert->getId(),other_vert->getNextVertex())) {
+                            firstV=vert;
+                        }
+                    }
+                    break;
+                }
+            }
+
+        }
+        if(!firstV)
+        {
+            break;
+        }
+
+
+        int min_before=-1;
+        int min_next=-1;
+        double lengthAdded=std::numeric_limits<double>::max();
+        for (Vertex* vert:hub) {
+            if(g->isEdgeInGraph(vert->getId(),firstV->getId())&&g->isEdgeInGraph(firstV->getId(),vert->getNextVertex())){
+                auto newLength=g->getDistance(vert->getId(),firstV->getId())+g->getDistance(firstV->getId(),vert->getNextVertex());
+                if (newLength<lengthAdded)
+                {
+                    lengthAdded=newLength;
+                    min_before=vert->getId();
+                    min_next=vert->getNextVertex();
+                }
+            }
+        }
+
+        if (min_before==-1)
+        {
+            break;
+        }
+        resultLength+=lengthAdded-g->getDistance(min_before,min_next);
+        firstV->setNextVertex(min_next);
+        g->getVertex(min_before)->setNextVertex(firstV->getId());
+        hub.emplace(firstV);
+
+    }
+
+
+
+
+    return hub.size()==g->getNoVertexes();
+}

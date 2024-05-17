@@ -8,7 +8,7 @@
 // Implementation inspired on the last project "Water Management" by Filipe Correia, Gabriela Silva and Gonçalo Nunes.
 
 std::vector<std::string> Menu::getOptions(){
-    return {"Exit Program", "Repeat Instructions", "Backtracking Algorithm (It yields the optimal solution but is infeasible for big instances)", "Triangle Approximation Algorithm", "3º Algoritmo", "4º Algoritmo", "Algoritmo com DFS (muitos false negatives)", "Algorithmo com Dijkstra (muitos false negatives)","Strange Hub Algorithm"};
+    return {"Exit Program", "Repeat Instructions", "Backtracking Algorithm (It yields the optimal solution but is infeasible for big instances)", "Triangle Approximation Algorithm", "3º Algoritmo", "4º Algoritmo", "Algoritmo com DFS (muitos false negatives)", "Algorithmo com Dijkstra (muitos false negatives)","Strange Hub Algorithm", "Strange Hub Algorithm 2"};
 }
 
 void Menu::print(std::string t){
