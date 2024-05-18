@@ -16,9 +16,10 @@ class Algorithms {
      * @param id of the vertex that we are analysing
      * @param costToBeat the maximum cost for this branch, if actual cost becomes bigger than this number the function will return false and cut this branch
      * @param numberVisited -> number of already visited vertexes, if we already visited all the vertexes the function will return true
+     * @param v0 The vertex on which the path starts
      * @return true if there is a possible solution in this branch
      */
-    static bool auxTSPwithBacktracking(Graph* g, int id, float& costToBeat, int numberVisited);
+    static bool auxTSPwithBacktracking(Graph* g, int id, float& costToBeat, int numberVisited, int v0);
 
     /**
      * A recursive depth-first search used by the triangular approximation algorithm to construct the final path.\n
@@ -45,9 +46,10 @@ public:
      * An backtracking algorithm for the TSP. It gets an optimal solution but it's infeasible for medium and big graphs
      * Complexity: O(V!)
      * @param g the graph
+     * @param v0 the vertex on which the path starts
      * @return the minimum cost of the TSP or -1 if it is impossible
      */
-    static float TSPwithBacktracking(Graph* g);
+    static float TSPwithBacktracking(Graph* g, int v0);
 
     /**
      * An approximation algorithm for the TSP problem, using a triangular approximation algorithm. \n
@@ -93,6 +95,7 @@ public:
     static int TSPGreedy(Graph* g, float &sum, int start);
 
 
+
     static float TSPChristofides(Graph* g);
 
     /**
@@ -114,7 +117,7 @@ public:
      * @param startVertexId The vertex on which the path starts
      * @return The length of the path found
      */
-    static double TSPwithTriangleApproximation2(Graph* g, int startVertex);
+    static double TSPwithTriangleApproximationPrim(Graph* g, int startVertex);
 
 
     /**
@@ -134,7 +137,7 @@ public:
  * @param resultLength The length of the tour found. If no path is found, this yields the length of a tour that doesn't contain all the vertices.
  * @return True if a tour containing all vertices found, false otherwise
  */
-    static bool HUBAlgorithm2(Graph* g, int v0,double &resultLength);
+    static bool HUBAlgorithmSlowerButBetterSearch(Graph* g, int v0, double &resultLength);
 };
 
 

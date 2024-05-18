@@ -11,7 +11,7 @@
 #include <stack>
 #include <limits>
 
-bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, float &costToBeat, int numberVisited) {
+bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, float &costToBeat, int numberVisited, int v0) {
     Vertex *v = g->getVertex(id);
 
     if (v->isVisited()) return false;
@@ -22,11 +22,11 @@ bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, float &costToBeat, int
     bool isPossible = false;
 
     if (numberVisited == g->getNoVertexes()) {
-        float cost = g->getDistance(0, id);
+        float cost = g->getDistance(v0, id);
 
         if ((cost < costToBeat) && (cost > 0)) {
             costToBeat = cost;
-            v->setNextVertex(0);
+            v->setNextVertex(v0);
             isPossible = true;
         }
     } else {
@@ -36,7 +36,7 @@ bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, float &costToBeat, int
             if (costEdge >= costToBeat) continue;
             float auxCostToBeat = costToBeat - costEdge;
 
-            if (auxTSPwithBacktracking(g, i, auxCostToBeat, numberVisited)) {
+            if (auxTSPwithBacktracking(g, i, auxCostToBeat, numberVisited, v0)) {
                 costToBeat = auxCostToBeat + costEdge;
                 v->setNextVertex(i);
                 isPossible = true;
@@ -49,12 +49,12 @@ bool Algorithms::auxTSPwithBacktracking(Graph *g, int id, float &costToBeat, int
     return isPossible;
 }
 
-float Algorithms::TSPwithBacktracking(Graph *g) {
+float Algorithms::TSPwithBacktracking(Graph *g, int v0) {
     for (Vertex *v: g->getVertexSet()) v->setVisited(false);
 
     float cost = INT_MAX;
 
-    if (auxTSPwithBacktracking(g, 0, cost, 0)) {
+    if (auxTSPwithBacktracking(g, v0, cost, 0, v0)) {
         return cost;
     }
 
@@ -142,7 +142,9 @@ float Algorithms::auxTriangleApproximationDFS(Graph *g, Vertex *vert, std::unord
 
 
 float Algorithms::TSPwithTriangleApproximation(Graph *g, int startVertexId) {
-
+    if(startVertexId<0||startVertexId>=g->getNoVertexes()){
+        return -1.0f;
+    }
     Vertex *vert = g->getVertex(startVertexId);
     if (!vert) {
         return -1;
@@ -209,6 +211,9 @@ bool TSPrealWorld1Rec(Graph* g, Vertex* currentVertex, int depth, int startVerte
 
 bool Algorithms::TSPrealWorldDFS(Graph* g, int startVertex, double &resultLength)
 {
+    if(startVertex<0||startVertex>=g->getNoVertexes()){
+        return false;
+    }
    resultLength=0;
    Vertex* vert=g->getVertex(startVertex);
    for (Vertex* v:g->getVertexSet()) {
@@ -225,7 +230,8 @@ return TSPrealWorld1Rec(g, vert, 0, startVertex, resultLength);
 bool Algorithms::TSPrealWorldDijkstra(Graph *g, int startVertex, double &resultLength)
 {
     const double MAX_DOUBLE=std::numeric_limits<double>::max();
-    Vertex* source;
+    Vertex* source=0;
+
 
     std::unordered_set<Vertex*> unvisited;
     for(Vertex* vert:g->getVertexSet())
@@ -239,6 +245,13 @@ bool Algorithms::TSPrealWorldDijkstra(Graph *g, int startVertex, double &resultL
         }
         unvisited.emplace(vert);
     }
+
+    if(source==0)
+    {
+        resultLength=-1;
+        return false;
+    }
+
     source->setDistanceFromSource(0);
     std::vector<Vertex*> verts;
     verts.push_back(source);
@@ -283,12 +296,12 @@ bool Algorithms::TSPrealWorldDijkstra(Graph *g, int startVertex, double &resultL
     }
 
     auto vertices =g->getVertexSetCopy();
-//#define MY_STUPID_ATTEMPT_AT_SALVAGING_THIS_ALGORITHM
-//#ifdef MY_STUPID_ATTEMPT_AT_SALVAGING_THIS_ALGORITHM
+
+
     std::sort(vertices.begin(), vertices.end(), [](Vertex* l,Vertex* r){
         return l->getDistanceFromSource()<r->getDistanceFromSource();
     });
-//#endif
+
 
 
     for(auto vert: vertices)
@@ -349,6 +362,7 @@ int Algorithms::TSPGreedy(Graph* g, float &sum, int start){
 
     int i = g->getNoVertexes() - 1;
     Vertex* current = g->getVertex(start); // starts at vertex 0
+
     int r = 0; // stores the way to handle when no way found
     int countOfExcess = 0;
     int vertexTrying = 0;
@@ -378,7 +392,9 @@ int Algorithms::TSPGreedy(Graph* g, float &sum, int start){
             std::cin >> r;
             if(r == 0){
                 // the user wants to go home.
+
                 float gohome = g->getDistance(current->getId(), start);
+
                 if(gohome >= 1){
                     sum += gohome;
                 }else{
@@ -388,6 +404,7 @@ int Algorithms::TSPGreedy(Graph* g, float &sum, int start){
                             gohome = 1;
                             break;
                         }
+
                         gohome = g->getDistance(current->getId(), trying) + g->getDistance(trying, start);
                         trying++;
                     }
@@ -425,11 +442,13 @@ int Algorithms::TSPGreedy(Graph* g, float &sum, int start){
     }
     if(r != 0){
         std::cout << "\nUsing this strategy, we visited " << countOfExcess << " vertexes twice, but visited all vertexes.\nThe total cost was " << sum << "\n";
+        return -2;
     }
 
     current->setNextVertex(start);
     sum += g->getDistance(start, current->getId());
-    return sum;
+
+    return 0;
 }
 
 bool isValidMatch(edgeInfo edge, Graph* g) {
@@ -819,9 +838,11 @@ double auxTriangleApproximationDFS2(Graph *g, Vertex *vert,Vertex *&currentLast)
 }
 
 
-double Algorithms::TSPwithTriangleApproximation2(Graph* g, int startVertex)
+double Algorithms::TSPwithTriangleApproximationPrim(Graph* g, int startVertex)
 {
-
+    if(startVertex<0||startVertex>=g->getNoVertexes()){
+        return false;
+    }
 
     Vertex *vert = g->getVertex(startVertex);
     if (!vert) {
@@ -853,8 +874,11 @@ double Algorithms::TSPwithTriangleApproximation2(Graph* g, int startVertex)
 bool Algorithms::HUBAlgorithm(Graph* g, int v0,double &resultLength){
     resultLength=0;
     std::set<Vertex*> hub;
+    if(v0<0||v0>=g->getNoVertexes()){
+        return false;
+    }
     auto source=g->getVertex(v0);
-    source->setNextVertex(0);
+    source->setNextVertex(v0);
     hub.emplace(source);
 
     while(hub.size()<g->getNoVertexes())
@@ -862,13 +886,13 @@ bool Algorithms::HUBAlgorithm(Graph* g, int v0,double &resultLength){
         Vertex* firstV=0;
         for(Vertex* vert:g->getVertexSet())
         {
-            {
+
                 if (hub.find(vert)==hub.end())
                 {
                     firstV=vert;
                     break;
                 }
-            }
+
 
         }
         if(!firstV)
@@ -913,11 +937,14 @@ bool Algorithms::HUBAlgorithm(Graph* g, int v0,double &resultLength){
 
 
 
-bool Algorithms::HUBAlgorithm2(Graph* g, int v0,double &resultLength){
+bool Algorithms::HUBAlgorithmSlowerButBetterSearch(Graph* g, int v0, double &resultLength){
+    if(v0<0||v0>=g->getNoVertexes()){
+        return false;
+    }
     resultLength=0;
     std::set<Vertex*> hub;
     auto source=g->getVertex(v0);
-    source->setNextVertex(0);
+    source->setNextVertex(v0);
     hub.emplace(source);
 
     while(hub.size()<g->getNoVertexes())

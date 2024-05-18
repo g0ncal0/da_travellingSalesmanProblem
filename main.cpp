@@ -1,9 +1,13 @@
 #include <iostream>
+#include <chrono>
 #include "Graph/Graph.h"
 #include "Parser.h"
 #include "Algorithms/Algorithms.h"
 #include "Menu.h"
 #include "Statistics.h"
+
+#include <chrono>
+
 
 int main() {
 
@@ -25,6 +29,8 @@ int main() {
 
     while(c){
         int i = Menu::chooseoption();
+        int v0;
+
         auto s = std::chrono::system_clock::now();
         std::chrono::time_point<std::chrono::system_clock>  e;
         switch (i) {
@@ -35,26 +41,29 @@ int main() {
                 Menu::displayoptions();
                 break;
             case 2:
-                cost = Algorithms::TSPwithBacktracking(g);
+                v0 = Menu::choseInitVertex();
+                cost = Algorithms::TSPwithBacktracking(g, v0);
                 e= std::chrono::system_clock::now();
-                Menu::printInfoPath(g, 0, cost);
+                Menu::printInfoPath(g, v0, cost);
                 break;
-            case 3:
-                cost = Algorithms::TSPwithTriangleApproximation(g, 0);
+
+            case 3: {
+                v0 = Menu::choseInitVertex();
+                cost = Algorithms::TSPwithTriangleApproximationPrim(g, v0);
                 e = std::chrono::system_clock::now();
                 Menu::printInfoPath(g, 0, cost);
                 Menu::askOptimize(g, 0, cost);
-                break;
+            }   break;
+
             case 4:
             {
-                int starting = Menu::getNumber("Which vertex do you want to start (default = 0)");
-                int a = Algorithms::TSPGreedy(g, cost, starting);
-                e= std::chrono::system_clock::now();
+                v0 = Menu::choseInitVertex();
+                int a = Algorithms::TSPGreedy(g, cost, v0);
                 if(a == 0){
-                    Menu::printInfoPath(g, 0, cost);
-                    Menu::askOptimize(g, 0, cost);
+                    e = std::chrono::system_clock::now();
+                    Menu::printInfoPath(g, v0, cost);
+                    Menu::askOptimize(g, v0, cost);
                 }
-
                 break;
             }
             case 5:
@@ -64,40 +73,56 @@ int main() {
                 break;
             case 6:
                 {
+                    v0 = Menu::choseInitVertex();
                     double dCost=0;
-                    bool success= Algorithms::TSPrealWorldDFS(g, 0, dCost);
+                    bool success= Algorithms::TSPrealWorldDFS(g, v0, dCost);
                     e= std::chrono::system_clock::now();
-                    std::cout<<(success?"Success!\n":"Failure!\n");
-                    Menu::printInfoPath(g, 0,dCost);
-                    Menu::askOptimize(g, 0, dCost);
+                    Menu::print((success?"Success!\n":"Failure!\n"));
+                    Menu::printInfoPath(g, v0,dCost);
+                    if(success) {
+                        Menu::askOptimize(g, v0, dCost);
+                    }
                 }
                 break;
             case 7:
-            {   double dCost=0;
-                bool success= Algorithms::TSPrealWorldDijkstra(g, 0, dCost);
+            {
+                v0 = Menu::choseInitVertex();
+                double dCost=0;
+                bool success= Algorithms::TSPrealWorldDijkstra(g, v0, dCost);
                 e= std::chrono::system_clock::now();
-                std::cout<<(success?"Success!\n":"Failure!\n");
-                Menu::printInfoPath(g, 0,dCost);
-                Menu::askOptimize(g, 0, dCost);
+                Menu::print((success?"Success!\n":"Failure!\n"));
+
+                Menu::printInfoPath(g, v0, dCost);
+                if(success) {
+                    Menu::askOptimize(g, v0, dCost);
+                }
             }
                 break;
             case 8:
             {
+                v0 = Menu::choseInitVertex();
                 double dCost=0;
-                bool success= Algorithms::HUBAlgorithm(g,0,dCost);
+
+                bool success= Algorithms::HUBAlgorithm(g,v0,dCost);
                 e= std::chrono::system_clock::now();
-                std::cout<<(success?"Success!\n":"Failure!\n");
-                Menu::printInfoPath(g, 0,dCost);
-                Menu::askOptimize(g, 0, dCost);
+                Menu::print((success?"Success!\n":"Failure!\n"));
+                Menu::printInfoPath(g, v0,dCost);
+                if(success) {
+                    Menu::askOptimize(g, v0, dCost);
+                }
             }
                 break;
             case 9:
             {
+                v0 = Menu::choseInitVertex();
                 double dCost=0;
-                bool success= Algorithms::HUBAlgorithm2(g,0,dCost);
-                std::cout<<(success?"Success!\n":"Failure!\n");
-                Menu::printInfoPath(g, 0,dCost);
-                Menu::askOptimize(g, 0, dCost);
+
+                bool success= Algorithms::HUBAlgorithmSlowerButBetterSearch(g, v0, dCost);
+                Menu::print((success?"Success!\n":"Failure!\n"));
+                Menu::printInfoPath(g, v0,dCost);
+                if(success) {
+                    Menu::askOptimize(g, v0, dCost);
+                }
             }
                 break;
             default:
