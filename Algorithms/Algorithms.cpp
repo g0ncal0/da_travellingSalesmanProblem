@@ -142,7 +142,9 @@ float Algorithms::auxTriangleApproximationDFS(Graph *g, Vertex *vert, std::unord
 
 
 float Algorithms::TSPwithTriangleApproximation(Graph *g, int startVertexId) {
-
+    if(startVertexId<0||startVertexId>=g->getNoVertexes()){
+        return -1.0f;
+    }
     Vertex *vert = g->getVertex(startVertexId);
     if (!vert) {
         return -1;
@@ -209,6 +211,9 @@ bool TSPrealWorld1Rec(Graph* g, Vertex* currentVertex, int depth, int startVerte
 
 bool Algorithms::TSPrealWorldDFS(Graph* g, int startVertex, double &resultLength)
 {
+    if(startVertex<0||startVertex>=g->getNoVertexes()){
+        return false;
+    }
    resultLength=0;
    Vertex* vert=g->getVertex(startVertex);
    for (Vertex* v:g->getVertexSet()) {
@@ -225,7 +230,8 @@ return TSPrealWorld1Rec(g, vert, 0, startVertex, resultLength);
 bool Algorithms::TSPrealWorldDijkstra(Graph *g, int startVertex, double &resultLength)
 {
     const double MAX_DOUBLE=std::numeric_limits<double>::max();
-    Vertex* source;
+    Vertex* source=0;
+
 
     std::unordered_set<Vertex*> unvisited;
     for(Vertex* vert:g->getVertexSet())
@@ -239,6 +245,13 @@ bool Algorithms::TSPrealWorldDijkstra(Graph *g, int startVertex, double &resultL
         }
         unvisited.emplace(vert);
     }
+
+    if(source==0)
+    {
+        resultLength=-1;
+        return false;
+    }
+
     source->setDistanceFromSource(0);
     std::vector<Vertex*> verts;
     verts.push_back(source);
@@ -283,12 +296,12 @@ bool Algorithms::TSPrealWorldDijkstra(Graph *g, int startVertex, double &resultL
     }
 
     auto vertices =g->getVertexSetCopy();
-//#define MY_STUPID_ATTEMPT_AT_SALVAGING_THIS_ALGORITHM
-//#ifdef MY_STUPID_ATTEMPT_AT_SALVAGING_THIS_ALGORITHM
+
+
     std::sort(vertices.begin(), vertices.end(), [](Vertex* l,Vertex* r){
         return l->getDistanceFromSource()<r->getDistanceFromSource();
     });
-//#endif
+
 
 
     for(auto vert: vertices)
@@ -340,12 +353,16 @@ bool Algorithms::TSPrealWorldDijkstra(Graph *g, int startVertex, double &resultL
 
 
 
-int Algorithms::TSPGreedy(Graph* g, float &sum, int v0){
+int Algorithms::TSPGreedy(Graph* g, float &sum, int start){
+    if(!(start >= 0 && start < g->getNoVertexes())){
+        start = 0;
+    }
     g->initializeVisited();
     sum = 0;
 
     int i = g->getNoVertexes() - 1;
-    Vertex* current = g->getVertex(v0); // start of the tour
+    Vertex* current = g->getVertex(start); // starts at vertex 0
+
     int r = 0; // stores the way to handle when no way found
     int countOfExcess = 0;
     int vertexTrying = 0;
@@ -370,12 +387,14 @@ int Algorithms::TSPGreedy(Graph* g, float &sum, int v0){
 
         if(indexNext == -1 && r ==0){
             std::cout << "Infeasable TSP\n";
-            std::cout << "Do you want to go back home (v0) or try brute-force to visit all vertexes (1).";
+            std::cout << "Do you want to go back home (0) or try brute-force to visit all vertexes (1).";
 
             std::cin >> r;
             if(r == 0){
                 // the user wants to go home.
-                float gohome = g->getDistance(current->getId(), v0);
+
+                float gohome = g->getDistance(current->getId(), start);
+
                 if(gohome >= 1){
                     sum += gohome;
                 }else{
@@ -385,7 +404,8 @@ int Algorithms::TSPGreedy(Graph* g, float &sum, int v0){
                             gohome = 1;
                             break;
                         }
-                        gohome = g->getDistance(current->getId(), trying) + g->getDistance(trying, v0);
+
+                        gohome = g->getDistance(current->getId(), trying) + g->getDistance(trying, start);
                         trying++;
                     }
                     sum += gohome;
@@ -422,11 +442,13 @@ int Algorithms::TSPGreedy(Graph* g, float &sum, int v0){
     }
     if(r != 0){
         std::cout << "\nUsing this strategy, we visited " << countOfExcess << " vertexes twice, but visited all vertexes.\nThe total cost was " << sum << "\n";
+        return -2;
     }
 
-    current->setNextVertex(v0);
-    sum += g->getDistance(v0, current->getId());
-    return sum;
+    current->setNextVertex(start);
+    sum += g->getDistance(start, current->getId());
+
+    return 0;
 }
 
 bool isValidMatch(edgeInfo edge, Graph* g) {
@@ -816,9 +838,11 @@ double auxTriangleApproximationDFS2(Graph *g, Vertex *vert,Vertex *&currentLast)
 }
 
 
-double Algorithms::TSPwithTriangleApproximation2(Graph* g, int startVertex)
+double Algorithms::TSPwithTriangleApproximationPrim(Graph* g, int startVertex)
 {
-
+    if(startVertex<0||startVertex>=g->getNoVertexes()){
+        return false;
+    }
 
     Vertex *vert = g->getVertex(startVertex);
     if (!vert) {
@@ -850,8 +874,11 @@ double Algorithms::TSPwithTriangleApproximation2(Graph* g, int startVertex)
 bool Algorithms::HUBAlgorithm(Graph* g, int v0,double &resultLength){
     resultLength=0;
     std::set<Vertex*> hub;
+    if(v0<0||v0>=g->getNoVertexes()){
+        return false;
+    }
     auto source=g->getVertex(v0);
-    source->setNextVertex(0);
+    source->setNextVertex(v0);
     hub.emplace(source);
 
     while(hub.size()<g->getNoVertexes())
@@ -859,13 +886,13 @@ bool Algorithms::HUBAlgorithm(Graph* g, int v0,double &resultLength){
         Vertex* firstV=0;
         for(Vertex* vert:g->getVertexSet())
         {
-            {
+
                 if (hub.find(vert)==hub.end())
                 {
                     firstV=vert;
                     break;
                 }
-            }
+
 
         }
         if(!firstV)
@@ -910,11 +937,14 @@ bool Algorithms::HUBAlgorithm(Graph* g, int v0,double &resultLength){
 
 
 
-bool Algorithms::HUBAlgorithm2(Graph* g, int v0,double &resultLength){
+bool Algorithms::HUBAlgorithmSlowerButBetterSearch(Graph* g, int v0, double &resultLength){
+    if(v0<0||v0>=g->getNoVertexes()){
+        return false;
+    }
     resultLength=0;
     std::set<Vertex*> hub;
     auto source=g->getVertex(v0);
-    source->setNextVertex(0);
+    source->setNextVertex(v0);
     hub.emplace(source);
 
     while(hub.size()<g->getNoVertexes())

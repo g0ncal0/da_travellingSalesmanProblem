@@ -5,10 +5,11 @@
 #include "Menu.h"
 #include "Graph/Graph.h"
 
+#include <iomanip>
 // Implementation inspired on the last project "Water Management" by Filipe Correia, Gabriela Silva and Gonçalo Nunes.
 
 std::vector<std::string> Menu::getOptions(){
-    return {"Exit Program", "Repeat Instructions", "Backtracking Algorithm (It yields the optimal solution but is infeasible for big instances)", "Triangle Approximation Algorithm", "Greedy Algorithm - Nearest Neighbour Algorithm", "4º Algoritmo", "Algoritmo com DFS (muitos false negatives)", "Algorithmo com Dijkstra (muitos false negatives)","Strange Hub Algorithm", "Strange Hub Algorithm 2"};
+    return {"Exit Program", "Repeat Instructions", "Backtracking Algorithm (It yields the optimal solution but is infeasible for big instances)", "Triangle Approximation Algorithm", "Greedy Algorithm - Nearest Neighbour Algorithm", "[Unstable] Christofides Algorithm", "Algoritmo com DFS (muitos false negatives)", "Algorithmo com Dijkstra (muitos false negatives)","Strange Hub Algorithm", "Strange Hub Algorithm 2"};
 }
 
 void Menu::print(std::string t){
@@ -62,10 +63,9 @@ std::string Menu::getInput(std::string text){
     getline(std::cin, input);
     return input;
 }
-
 void Menu::printInfoPath(Graph* g, int v0, float cost) {
     if(cost == -1){return;}
-    std::cout << "O custo minimo é: " << cost << std::endl;
+    std::cout << "O custo minimo é: " << std::setiosflags(std::ios_base::fixed)<< std::setprecision(2)  << cost << std::endl;
 
     Vertex* v = g->getVertex(v0);
 

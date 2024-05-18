@@ -89,10 +89,11 @@ public:
     * Time Complexity O(V^2)
     * @param g Graph assumed to be complete
     * @param sum The value found
-    * @param v0 The vertex on which the path starts
+    * @param start The index of starting vertex
     * @return 0 if ok, 1 if ok but used strategies that will cause errors in printing the edges, non-0 and non-1 if error
    */
-    static int TSPGreedy(Graph* g, float &sum, int v0);
+    static int TSPGreedy(Graph* g, float &sum, int start);
+
 
 
     static float TSPChristofides(Graph* g);
@@ -116,7 +117,7 @@ public:
      * @param startVertexId The vertex on which the path starts
      * @return The length of the path found
      */
-    static double TSPwithTriangleApproximation2(Graph* g, int startVertex);
+    static double TSPwithTriangleApproximationPrim(Graph* g, int startVertex);
 
 
     /**
@@ -136,7 +137,7 @@ public:
  * @param resultLength The length of the tour found. If no path is found, this yields the length of a tour that doesn't contain all the vertices.
  * @return True if a tour containing all vertices found, false otherwise
  */
-    static bool HUBAlgorithm2(Graph* g, int v0,double &resultLength);
+    static bool HUBAlgorithmSlowerButBetterSearch(Graph* g, int v0, double &resultLength);
 };
 
 

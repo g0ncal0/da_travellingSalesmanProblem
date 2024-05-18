@@ -6,6 +6,9 @@
 #include "Menu.h"
 #include "Statistics.h"
 
+#include <chrono>
+
+
 int main() {
 
     // Insert this to run statistics
@@ -26,9 +29,9 @@ int main() {
 
     while(c){
         int i = Menu::chooseoption();
-        int v0 = Menu::choseInitVertex();
-        if (v0 >= g->getNoVertexes()) v0 = 0;
-        auto s = std::chrono::system_clock::now();
+        int v0;
+
+        std::chrono::time_point<std::chrono::system_clock> s;
         std::chrono::time_point<std::chrono::system_clock>  e;
         switch (i) {
             case 0:
@@ -38,66 +41,96 @@ int main() {
                 Menu::displayoptions();
                 break;
             case 2:
+                v0 = Menu::choseInitVertex();
+                s  = std::chrono::system_clock::now();
                 cost = Algorithms::TSPwithBacktracking(g, v0);
                 e= std::chrono::system_clock::now();
                 Menu::printInfoPath(g, v0, cost);
                 break;
-            case 3:
-                cost = Algorithms::TSPwithTriangleApproximation(g, v0);
+
+            case 3: {
+                v0 = Menu::choseInitVertex();
+                s  = std::chrono::system_clock::now();
+                cost = Algorithms::TSPwithTriangleApproximationPrim(g, v0);
                 e = std::chrono::system_clock::now();
-                Menu::printInfoPath(g, v0, cost);
-                Menu::askOptimize(g, v0, cost);
-                break;
+                Menu::printInfoPath(g, 0, cost);
+                Menu::askOptimize(g, 0, cost);
+            }   break;
+
             case 4:
             {
+                v0 = Menu::choseInitVertex();
+                s  = std::chrono::system_clock::now();
                 int a = Algorithms::TSPGreedy(g, cost, v0);
-                e= std::chrono::system_clock::now();
-                Menu::printInfoPath(g, v0, cost);
-                Menu::askOptimize(g, v0, cost);
+                e = std::chrono::system_clock::now();
 
+                if(a == 0){
+                    Menu::printInfoPath(g, v0, cost);
+                    Menu::askOptimize(g, v0, cost);
+                }
                 break;
             }
             case 5:
+                s  = std::chrono::system_clock::now();
                 cost = Algorithms::TSPChristofides(g);
                 e= std::chrono::system_clock::now();
                 Menu::printInfoPath(g, 0, cost);
                 break;
             case 6:
                 {
+                    v0 = Menu::choseInitVertex();
                     double dCost=0;
+                    s  = std::chrono::system_clock::now();
                     bool success= Algorithms::TSPrealWorldDFS(g, v0, dCost);
                     e= std::chrono::system_clock::now();
-                    std::cout<<(success?"Success!\n":"Failure!\n");
+                    Menu::print((success?"Success!\n":"Failure!\n"));
                     Menu::printInfoPath(g, v0,dCost);
-                    Menu::askOptimize(g, v0, dCost);
+                    if(success) {
+                        Menu::askOptimize(g, v0, dCost);
+                    }
                 }
                 break;
             case 7:
-            {   double dCost=0;
+            {
+                v0 = Menu::choseInitVertex();
+                double dCost=0;
+                s  = std::chrono::system_clock::now();
                 bool success= Algorithms::TSPrealWorldDijkstra(g, v0, dCost);
                 e= std::chrono::system_clock::now();
-                std::cout<<(success?"Success!\n":"Failure!\n");
-                Menu::printInfoPath(g, v0,dCost);
-                Menu::askOptimize(g, v0, dCost);
+                Menu::print((success?"Success!\n":"Failure!\n"));
+
+                Menu::printInfoPath(g, v0, dCost);
+                if(success) {
+                    Menu::askOptimize(g, v0, dCost);
+                }
             }
                 break;
             case 8:
             {
+                v0 = Menu::choseInitVertex();
                 double dCost=0;
+                s  = std::chrono::system_clock::now();
                 bool success= Algorithms::HUBAlgorithm(g,v0,dCost);
                 e= std::chrono::system_clock::now();
-                std::cout<<(success?"Success!\n":"Failure!\n");
+                Menu::print((success?"Success!\n":"Failure!\n"));
                 Menu::printInfoPath(g, v0,dCost);
-                Menu::askOptimize(g, v0, dCost);
+                if(success) {
+                    Menu::askOptimize(g, v0, dCost);
+                }
             }
                 break;
             case 9:
             {
+                v0 = Menu::choseInitVertex();
                 double dCost=0;
-                bool success= Algorithms::HUBAlgorithm2(g,v0,dCost);
-                std::cout<<(success?"Success!\n":"Failure!\n");
+                s  = std::chrono::system_clock::now();
+                bool success= Algorithms::HUBAlgorithmSlowerButBetterSearch(g, v0, dCost);
+                e= std::chrono::system_clock::now();
+                Menu::print((success?"Success!\n":"Failure!\n"));
                 Menu::printInfoPath(g, v0,dCost);
-                Menu::askOptimize(g, v0, dCost);
+                if(success) {
+                    Menu::askOptimize(g, v0, dCost);
+                }
             }
                 break;
             default:
