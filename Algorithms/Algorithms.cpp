@@ -672,10 +672,10 @@ float Algorithms::twoOpt(Graph *g, int v0, float cost) {
     while (true) {
         path.push_back(v->getId());
         v = g->getVertex(v->getNextVertex());
-        if (v->getId() == 0) break;
+        if (v->getId() == v0) break;
     }
 
-    path.push_back(0);
+    path.push_back(v0);
 
     float oldTrace;
     float newTrace;

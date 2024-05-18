@@ -98,6 +98,6 @@ void Menu::askOptimize(Graph* g, int v0, float cost) {
         cost = Algorithms::twoOpt(g, v0, cost);
 
         std::cout << "\nThese are the optimized results:\n";
-        Menu::printInfoPath(g, 0, cost);
+        Menu::printInfoPath(g, v0, cost);
     }
 }
