@@ -340,12 +340,15 @@ bool Algorithms::TSPrealWorldDijkstra(Graph *g, int startVertex, double &resultL
 
 
 
-int Algorithms::TSPGreedy(Graph* g, float &sum){
+int Algorithms::TSPGreedy(Graph* g, float &sum, int start){
+    if(!(start >= 0 && start < g->getNoVertexes())){
+        start = 0;
+    }
     g->initializeVisited();
     sum = 0;
 
     int i = g->getNoVertexes() - 1;
-    Vertex* current = g->getVertex(0); // starts at vertex 0
+    Vertex* current = g->getVertex(start); // starts at vertex 0
     int r = 0; // stores the way to handle when no way found
     int countOfExcess = 0;
     int vertexTrying = 0;
@@ -375,7 +378,7 @@ int Algorithms::TSPGreedy(Graph* g, float &sum){
             std::cin >> r;
             if(r == 0){
                 // the user wants to go home.
-                float gohome = g->getDistance(current->getId(), 0);
+                float gohome = g->getDistance(current->getId(), start);
                 if(gohome >= 1){
                     sum += gohome;
                 }else{
@@ -385,7 +388,7 @@ int Algorithms::TSPGreedy(Graph* g, float &sum){
                             gohome = 1;
                             break;
                         }
-                        gohome = g->getDistance(current->getId(), trying) + g->getDistance(trying, 0);
+                        gohome = g->getDistance(current->getId(), trying) + g->getDistance(trying, start);
                         trying++;
                     }
                     sum += gohome;
@@ -424,8 +427,8 @@ int Algorithms::TSPGreedy(Graph* g, float &sum){
         std::cout << "\nUsing this strategy, we visited " << countOfExcess << " vertexes twice, but visited all vertexes.\nThe total cost was " << sum << "\n";
     }
 
-    current->setNextVertex(0);
-    sum += g->getDistance(0, current->getId());
+    current->setNextVertex(start);
+    sum += g->getDistance(start, current->getId());
     return sum;
 }
 

@@ -47,7 +47,8 @@ int main() {
                 break;
             case 4:
             {
-                int a = Algorithms::TSPGreedy(g, cost);
+                int starting = Menu::getNumber("Which vertex do you want to start (default = 0)");
+                int a = Algorithms::TSPGreedy(g, cost, starting);
                 e= std::chrono::system_clock::now();
                 if(a == 0){
                     Menu::printInfoPath(g, 0, cost);

@@ -16,7 +16,7 @@ void Statistics::run(){
         Graph *g = Parser::parseExtraFullyConnectedWithId(i);
         auto s = std::chrono::system_clock::now();
         float r;
-        std::cout << Algorithms::TSPGreedy(g, r) << ", ";
+        std::cout << Algorithms::TSPGreedy(g, r, 0) << ", ";
         auto e = std::chrono::system_clock::now();
         auto d = e - s;
         //std::cout << std::chrono::duration<double, std::micro>(d).count() << ", ";
@@ -51,7 +51,7 @@ void Statistics::run(){
         Graph *g = Parser::parseExtraFullyConnectedWithId(i);
         auto s = std::chrono::system_clock::now();
         float cost;
-        Algorithms::TSPGreedy(g, cost);
+        Algorithms::TSPGreedy(g, cost, 0);
         std::cout << Algorithms::twoOpt(g, 0, cost) << ", ";
 
         auto e = std::chrono::system_clock::now();

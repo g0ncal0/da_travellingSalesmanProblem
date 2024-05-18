@@ -87,9 +87,10 @@ public:
     * Time Complexity O(V^2)
     * @param g Graph assumed to be complete
     * @param sum The value found
+    * @param start The index of starting vertex
     * @return 0 if ok, 1 if ok but used strategies that will cause errors in printing the edges, non-0 and non-1 if error
    */
-    static int TSPGreedy(Graph* g, float &sum);
+    static int TSPGreedy(Graph* g, float &sum, int start);
 
 
     static float TSPChristofides(Graph* g);
