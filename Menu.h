@@ -23,6 +23,7 @@ public:
     static void displayoptions();
     static int getNumber(std::string text);
     static int chooseoption();
+    static int choseInitVertex();
     static std::string getInput(std::string text);
     static void printInfoPath(Graph* g, int v0, float cost);
     static void askOptimize(Graph* g, int v0, float cost);
