@@ -5,10 +5,11 @@
 #include "Menu.h"
 #include "Graph/Graph.h"
 
+#include <iomanip>
 // Implementation inspired on the last project "Water Management" by Filipe Correia, Gabriela Silva and Gonçalo Nunes.
 
 std::vector<std::string> Menu::getOptions(){
-    return {"Exit Program", "Repeat Instructions", "Backtracking Algorithm (It yields the optimal solution but is infeasible for big instances)", "Triangle Approximation Algorithm", "3º Algoritmo", "4º Algoritmo", "Algoritmo com DFS (muitos false negatives)", "Algorithmo com Dijkstra (muitos false negatives)","Strange Hub Algorithm", "Strange Hub Algorithm 2"};
+    return {"Exit Program", "Repeat Instructions", "Backtracking Algorithm (It yields the optimal solution but is infeasible for big instances)", "Triangle Approximation Algorithm", "Greedy Algorithm - Nearest Neighbour Algorithm", "4º Algoritmo", "Algoritmo com DFS (muitos false negatives)", "Algorithmo com Dijkstra (muitos false negatives)","Strange Hub Algorithm", "Strange Hub Algorithm 2"};
 }
 
 void Menu::print(std::string t){
@@ -46,6 +47,13 @@ int Menu::chooseoption(){
     return choosen;
 }
 
+int Menu::choseInitVertex() {
+    std::cout << "In which vertex do you want to start the tour?\n";
+    int choice = getNumber("Your option: ");
+
+    return choice;
+}
+
 
 std::string Menu::getInput(std::string text){
     print(text);
@@ -55,20 +63,19 @@ std::string Menu::getInput(std::string text){
     getline(std::cin, input);
     return input;
 }
-
 void Menu::printInfoPath(Graph* g, int v0, float cost) {
     if(cost == -1){return;}
-    std::cout << "O custo minimo é: " << cost << std::endl;
+    std::cout << "O custo minimo é: " << std::setiosflags(std::ios_base::fixed)<< std::setprecision(2)  << cost << std::endl;
 
     Vertex* v = g->getVertex(v0);
 
-    int ctn = getNumber("Do you want to see the path? (insert 0 to no)");
+    int ctn = getNumber("Do you want to see the path? (insert 0 to no) ");
     if(!ctn){
         return;
     }
     Menu::print("=============");
     std::cout << "Entre parênteses está o custo do segmento respetivo." << std::endl;
-    std::cout << "O caminho é 0";
+    std::cout << "O caminho é " << v0;
     while (true) {
         std::cout << " ->(" << g->getDistance(v->getId(), v->getNextVertex()) << ")";
         std::cout << "-> " << v->getNextVertex();
