@@ -71,12 +71,6 @@ int main() {
                 break;
             }
             case 5:
-                s  = std::chrono::system_clock::now();
-                cost = Algorithms::TSPChristofides(g);
-                e= std::chrono::system_clock::now();
-                Menu::printInfoPath(g, 0, cost);
-                break;
-            case 6:
                 {
                     v0 = Menu::choseInitVertex();
                     double dCost=0;
@@ -90,7 +84,7 @@ int main() {
                     }
                 }
                 break;
-            case 7:
+            case 6:
             {
                 v0 = Menu::choseInitVertex();
                 double dCost=0;
@@ -105,7 +99,7 @@ int main() {
                 }
             }
                 break;
-            case 8:
+            case 7:
             {
                 v0 = Menu::choseInitVertex();
                 double dCost=0;
@@ -119,7 +113,7 @@ int main() {
                 }
             }
                 break;
-            case 9:
+            case 8:
             {
                 v0 = Menu::choseInitVertex();
                 double dCost=0;

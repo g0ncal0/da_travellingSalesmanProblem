@@ -10,7 +10,7 @@
 #include <unordered_map>
 class Algorithms {
     /**
-     * The recursive function of Backtracking Algorithm that actually does almost all the work
+     * The recursive function of Backtracking Algorithm that actually does almost all the work \n
      * Complexity: O(V!)
      * @param g the graph
      * @param id of the vertex that we are analysing
@@ -22,7 +22,7 @@ class Algorithms {
     static bool auxTSPwithBacktracking(Graph* g, int id, float& costToBeat, int numberVisited, int v0);
 
     /**
-     * A recursive depth-first search used by the triangular approximation algorithm to construct the final path.\n
+     * A recursive depth-first search used by the triangular approximation algorithm to construct the final path. \n
      * Complexity: O(V + E)
      * @param g The graph on which the algorithm is being performed
      * @param vert The vertex which is being explored
@@ -33,7 +33,7 @@ class Algorithms {
     static float auxTriangleApproximationDFS(Graph *g,Vertex* vert, std::unordered_map<Vertex*,std::vector<Vertex*>>& edges,Vertex*& currentLast);
 
     /**
-     * An implementation of Kruskal's algorithm, used to construct a minimum spanning tree for the triangular approximation algorithm.\n
+     * An implementation of Kruskal's algorithm, used to construct a minimum spanning tree for the triangular approximation algorithm. \n
      * Complexity: O(V + E)
      * @param g The graph on which the algorithm is being performed
      * @param startVertex The vertex to start the minimum spanning tree with
@@ -43,7 +43,7 @@ class Algorithms {
 public:
 
     /**
-     * An backtracking algorithm for the TSP. It gets an optimal solution but it's infeasible for medium and big graphs
+     * An backtracking algorithm for the TSP. It gets an optimal solution but it's infeasible for medium and big graphs \n
      * Complexity: O(V!)
      * @param g the graph
      * @param v0 the vertex on which the path starts
@@ -83,9 +83,9 @@ public:
     static bool TSPrealWorldDijkstra(Graph* g, int startVertex, double &resultLength);
 
     /**
-    * Gives an approximated result to TSP problem using greedy approach
-    * Basically, goes to each vertex and finds the edge with lower weight
-     * Allows the user to decide what to do in case of not being allowed to continue without revisiting a vertex
+    * Gives an approximated result to TSP problem using greedy approach \n
+    * Basically, goes to each vertex and finds the edge with lower weight \n
+     * Allows the user to decide what to do in case of not being allowed to continue without revisiting a vertex \n
     * Time Complexity O(V^2)
     * @param g Graph assumed to be complete
     * @param sum The value found
@@ -95,11 +95,8 @@ public:
     static int TSPGreedy(Graph* g, float &sum, int start);
 
 
-
-    static float TSPChristofides(Graph* g);
-
     /**
-     * An optimization algorithm 2-opt that works by changing pairs of vertexes to get a better solution
+     * An optimization algorithm 2-opt that works by changing pairs of vertexes to get a better solution \n
      * Complexity: O(V²)
      * @param g the graph
      * @param v0 first vertex
@@ -108,7 +105,15 @@ public:
      */
     static float twoOpt(Graph* g, int v0, float cost);
 
-    static void anotherMST(Graph* g, int v0, std::vector<edgeInfo>* edges);
+    /**
+     * Prim Algorithm for finding the MST. \n
+     * The MST is stored in the graph -> vector 'edgeUsedInMST' \n
+     * Complexity: O(E log(E))
+     * @param g the graph
+     * @param v0 the first vertex
+     * @param edges where the algorithm will store the sorted edges
+     */
+    static void primMST(Graph* g, int v0, std::vector<edgeInfo>* edges);
 
     /**
      * An approximation algorithm for the TSP problem, using a triangular approximation algorithm. \n
